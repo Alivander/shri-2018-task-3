@@ -23,7 +23,7 @@ gulp.task("html", function() {
   return gulp.src("*.html")
     .pipe(plumber())
     .pipe(htmlmin({collapseWhitespace: true}))
-    .pipe(gulp.dest("build"))
+    .pipe(gulp.dest("public"))
     .pipe(server.stream());
 });
 
@@ -32,10 +32,10 @@ gulp.task("style", function () {
     .pipe(plumber())
 		.pipe(sass())
     .pipe(postcss([ autoprefixer() ]))
-		.pipe(gulp.dest("build/css"))
+		.pipe(gulp.dest("public/css"))
     .pipe(cssmin())
     .pipe(rename("style.min.css"))
-    .pipe(gulp.dest("build/css"))
+    .pipe(gulp.dest("public/css"))
     .pipe(server.stream());
 });
 
@@ -44,7 +44,7 @@ gulp.task("script", function () {
     .pipe(plumber())
     .pipe(jsmin())
     .pipe(rename({suffix: ".min"}))
-    .pipe(gulp.dest("build/js"))
+    .pipe(gulp.dest("public/js"))
     .pipe(server.stream());
 });
 
@@ -56,22 +56,22 @@ gulp.task("images", function () {
       imagemin.jpegtran({progressive: true}),
       imagemin.svgo()
     ]))
-    .pipe(gulp.dest("build/img"));
+    .pipe(gulp.dest("public/img"));
 });
 
 gulp.task("fonts", function () {
   return gulp.src("fonts/*.{woff,woff2}")
     .pipe(plumber())
-    .pipe(gulp.dest("build/fonts"));
+    .pipe(gulp.dest("public/fonts"));
 });
 
 gulp.task("clean", function () {
-  return del("build");
+  return del("public");
 });
 
 gulp.task("serve", function() {
   server.init({
-    server: "build/"
+    server: "public/"
   });
 
   gulp.watch("*.html", ["html"]);
