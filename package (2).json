@@ -1,0 +1,33 @@
+{
+  "name": "shri-2018-task-2",
+  "version": "1.0.0",
+  "author": "Alina Vanieva",
+  "description": "Task 2 for SHRI-2018 by Alina Vanieva",
+  "private": true,
+  "scripts": {
+    "build": "gulp build",
+    "start": "npm run build && gulp serve"
+  },
+  "devDependencies": {
+    "autoprefixer": "^7.2.3",
+    "browser-sync": "^2.21.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-csso": "^3.0.0",
+    "gulp-htmlmin": "^4.0.0",
+    "gulp-imagemin": "^4.0.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-postcss": "^7.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglyfly": "^1.4.2",
+    "run-sequence": "^2.2.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "Firefox ESR"
+  ],
+  "engines": {
+    "node": "8.9.3"
+  }
+}

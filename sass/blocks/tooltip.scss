@@ -1,0 +1,68 @@
+.tooltip {
+  width: 360px;
+  max-width: 100vw;
+  padding: 17px 16px 16px;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 16px 0 rgba(0,44,92,0.28);
+  border-radius: 8px;
+  cursor: default;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    margin-left: -7px;
+    border-right: 7px solid transparent;
+    border-bottom: 9px solid #FFFFFF;
+    border-left: 7px solid transparent;
+  }
+
+  @media (min-width: $large-screen) {
+    width: 338px;
+  }
+
+  &__title {
+    margin: 0;
+    margin-bottom: 10px;
+    @include font(20px, 1.2, 700);
+
+    @media (min-width: $large-screen) {
+      font-size: 15px;
+      margin-bottom: 7px;
+    }
+  }
+
+  &__info {
+    margin: 0;
+    margin-bottom: 15px;
+    @include font(15px, 1.13);
+
+    @media (min-width: $large-screen) {
+      font-size: 13px;
+    }
+  }
+
+  &__users {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    @include font(15px, 1.13);
+    color: $grey-7;
+  }
+
+  &__first-user {
+    margin-right: 5px;
+  }
+
+  &__edit {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+    @media (min-width: $large-screen) {
+      top: 8px;
+      right: 8px;
+    }
+  }
+}

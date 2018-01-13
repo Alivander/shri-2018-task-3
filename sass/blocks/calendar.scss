@@ -1,0 +1,175 @@
+.calendar {
+  display: flex;
+  width: 360px;
+  padding: 16px 9px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 16px 0 rgba(0,44,92,0.28);
+  border-radius: 0 0 8px 8px;
+  transition-duration: 0.2s;
+
+  @media (min-width: $large-screen) {
+    width: 604px;
+    padding: 16px 13px;
+    border-radius: 4px;
+  }
+
+  &__prev {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+  }
+
+  &__next {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  &__month {
+    padding: 0 7px;
+
+    @media (min-width: 1280px) {
+      padding: 0 3px;
+    }
+  }
+
+  &__day-names {
+    display: flex;
+    margin: 0;
+    margin-bottom: 10px;
+    padding: 0;
+    list-style: none;
+
+  }
+
+  &__days {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.calendar__month-name {
+  margin: 0;
+  margin-bottom: 20px;
+  padding: 6px 38px;
+  @include font(20px, 1.18, 500);
+  text-align: center;
+
+  @media (min-width: $large-screen) {
+    margin-bottom: 10px;
+    padding: 3px 24px 4px;
+    font-size: 15px;
+  }
+}
+
+.calendar__day-number {
+  display: block;
+  width: 47px;
+  padding: 14px 0;
+  @include font(19px, 1, inherit);
+  text-align: center;
+  text-decoration: none;
+  color: #000000;
+  cursor: default;
+
+  &[href] {
+    cursor: pointer;
+  }
+
+  &:focus,
+  &:hover {
+    color: inherit;
+    border-radius: 5px;
+    box-shadow: inset 0 0 0 2px $grey-4;
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  &--weekend {
+    color: $blue-3;
+  }
+
+  @media (min-width: 1280px) {
+    width: 27px;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+}
+
+.calendar__day-name {
+  width: 47px;
+  padding: 14px 0;
+  text-align: center;
+  @include font(19px, 1);
+  color: #000000;
+
+  &--weekend {
+    color: $blue-3;
+  }
+
+  @media (min-width: 1280px) {
+    width: 27px;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+}
+
+.calendar__day {
+
+  &--current {
+    font-weight: 700;
+  }
+
+  &--past {
+    opacity: 0.5;
+  }
+
+  &[data-dayofweek="1"] {
+    padding-left: 0;
+  }
+
+  &[data-dayofweek="2"] {
+    padding-left: 47px;
+
+    @media (min-width: 1280px) {
+      padding-left: 27px;
+    }
+  }
+
+  &[data-dayofweek="3"] {
+    padding-left: 94px;
+
+    @media (min-width: 1280px) {
+      padding-left: 54px;
+    }
+  }
+
+  &[data-dayofweek="4"] {
+    padding-left: 141px;
+
+    @media (min-width: 1280px) {
+      padding-left: 81px;
+    }
+  }
+
+  &[data-dayofweek="5"] {
+    padding-left: 188px;
+
+    @media (min-width: 1280px) {
+      padding-left: 108px;
+    }
+  }
+
+  &[data-dayofweek="6"] {
+    padding-left: 235px;
+
+    @media (min-width: 1280px) {
+      padding-left: 135px;
+    }
+  }
+}

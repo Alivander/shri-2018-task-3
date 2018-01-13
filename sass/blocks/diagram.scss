@@ -1,0 +1,153 @@
+.diagram {
+  padding-top: 104px;
+  min-height: calc(100vh - 104px);
+  background-color: $grey-1;
+  background-image: linear-gradient(to right, #FFFFFF 0px, #FFFFFF 179px, $grey-1 179px, $grey-1 100%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 137px;
+    left: 180px;
+    z-index: 10;
+    width: 1px;
+    height: calc(100% - 137px);
+    box-shadow:
+      33px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      99px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      165px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      231px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      297px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      363px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      429px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      495px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      561px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      627px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      693px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      759px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      825px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      891px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      957px 0px 0px 0px rgba(19, 100, 205, 0.1),
+      1023px 0px 0px 0px rgba(19, 100, 205, 0.1);
+
+      @media (min-width: $large-screen) {
+        top: 118px;
+        left: 245px;
+        height: calc(100% - 118px);
+      }
+  }
+
+  @media (min-width: $large-screen) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    min-width: 1301px;
+    min-height: calc(100vh - 72px);
+    padding-top: 0;
+    background-image: linear-gradient(to right, #FFFFFF 0px, #FFFFFF 245px, $grey-1 245px, $grey-1 246px, transparent 246px, transparent 100%);
+  }
+
+  &__date {
+    position: fixed;
+    top: 49px;
+    width: 100%;
+    z-index: 500;
+    background-color: #FFFFFF;
+
+    @media (min-width: $large-screen) {
+      position: sticky;
+      top: 72px;
+      width: 245px;
+      z-index: 500;
+    }
+  }
+
+  &__time {
+    position: sticky;
+    top: 104px;
+    left: 50px;
+    z-index: 400;
+    display: flex;
+    width: 1236px;
+    margin: 0;
+    padding: 9px 0 10px 182px;
+    @include font(11px, 1.18, 700);
+    text-align: center;
+    color: #252525;
+    letter-spacing: 0.4px;
+    background-color: #FFFFFF;
+    border-top: 1px solid $grey-2;
+    border-bottom: 1px solid $grey-2;
+    list-style: none;
+
+    @media (min-width: $large-screen) {
+      position: sticky;
+      top: 72px;
+      width: 1056px;
+      padding: 16px 0;
+    }
+  }
+
+  &__time-line {
+    position: absolute;
+    top: 137px;
+    left: 180px;
+    z-index: 50;
+    width: 1px;
+    height: calc(100% - 137px);
+    background-color: $blue-2;
+
+    @media (min-width: $large-screen) {
+      top: 118px;
+      height: calc(100% - 118px);
+      transform: translateX(65px);
+    }
+  }
+
+  &__hour {
+    flex-shrink: 0;
+    width: 66px;
+  }
+
+  &__hour--disabled {
+    color: $grey-7;
+  }
+
+}
+
+.diagram__time-now {
+  position: absolute;
+  top: 7px;
+  left: 180px;
+  z-index: 100;
+  width: 50px;
+  height: 20px;
+  margin-left: -25px;
+  padding: 4px 3px;
+  @include font(11px, 1.18, 700);
+  text-align: center;
+  color: #FFFFFF;
+  background-color: $blue-2;
+  border-radius: 10px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    width: 1px;
+    height: 6px;
+    background-color: $blue-2;
+
+  }
+
+  @media (min-width: $large-screen) {
+    top: 14px;
+    transform: translateX(-180px);
+
+    &::after {
+      height: 12px;
+    }
+  }
+}

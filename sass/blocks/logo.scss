@@ -1,0 +1,14 @@
+.logo {
+  display: block;
+
+  &__img {
+    display: block;
+    width: 149px;
+    height: 21px;
+
+    @media (min-width: $large-screen) {
+      width: 174px;
+      height: 25px;
+    }
+  }
+}

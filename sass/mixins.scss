@@ -1,0 +1,16 @@
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  overflow: hidden;
+}
+
+@mixin font($size, $line-height: 1.2, $weight: 400) {
+  font-weight: $weight;
+  font-size: $size;
+  line-height: $line-height;
+}
