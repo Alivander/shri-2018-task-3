@@ -6,6 +6,7 @@ var mainPage = document.querySelector("main");
 
 var timeNow = mainPage.querySelector(".diagram__time-now");
 var timeLine = mainPage.querySelector(".diagram__time-line");
+var rowsWithRooms = mainPage.querySelectorAll(".floor__row");
 var room = mainPage.querySelector(".floor__room");
 var roomTitles = mainPage.querySelectorAll(".floor__room-title");
 var events = mainPage.querySelectorAll(".floor__event");
@@ -32,6 +33,7 @@ var eventCandidatesList = eventPage.querySelector(".event__candidates");
 var eventUsersList = eventPage.querySelector(".event__users");
 var eventRecommendation = eventPage.querySelector(".event__recommendation");
 var eventVariants = eventRecommendation.querySelectorAll(".event__variant");
+var eventHelp = eventPage.querySelector(".event__help");
 var eventWarning = eventPage.querySelector(".event__warning");
 var buttonTopEventClose = eventPage.querySelector(".event__top-close");
 var buttonFooterEventClose = eventPage.querySelector(".event__footer-close");
@@ -48,24 +50,38 @@ var buttonModalCancel = modal.querySelector(".modal__candel");
 var buttonModalRemove = modal.querySelector(".modal__remove");
 
 
-var onClickToggle = function (item, classToggle, targetClass, targetFunc) {
+var onClick = function (item, func) {
   item.addEventListener("click", function (evt) {
     evt.preventDefault ();
-    if (classToggle != "") {
-      item.classList.toggle(classToggle);
-    };
-    if (targetClass != "" && evt.target.classList.contains(targerClass)) {
-      targetFunc ();
-    }
+    func ();
   });
 };
 
 var eventOpen = function () {
   eventPage.removeAttribute('style');
+  eventHeading.innerHTML = "Новая встреча";
+  eventHelp.removeAttribute('style');
+  eventWarning.style.display = "none";
+  buttonEventCreate.removeAttribute('style');
+  buttonEventRemove.style.display = "none";
+  buttonEventSave.style.display = "none";
   mainPage.style.display = "none";
   headerButton.style.display = "none";
   modal.style.display = "none";
 };
+
+var eventEdit = function () {
+  eventPage.removeAttribute('style');
+  eventHeading.innerHTML = "Редактирование встречи";
+  eventHelp.style.display = "none";
+  eventWarning.removeAttribute('style');
+  buttonEventCreate.style.display = "none";
+  buttonEventRemove.removeAttribute('style');
+  buttonEventSave.removeAttribute('style');
+  mainPage.style.display = "none";
+  headerButton.style.display = "none";
+  modal.style.display = "none";
+}
 
 var eventClose = function () {
   eventPage.style.display = "none";
@@ -84,7 +100,7 @@ eventPage.style.display = "none";
 // Отображение текущего времени
 
 var timeOutput = function () {
-  var now = new Date();
+  var now = new Date ();
   var hour = now.getHours();
   var minute = now.getMinutes()
   var minuteInDay = hour * 60 + minute;
@@ -110,6 +126,21 @@ timeOutput();
 var timeOutputUpdate = setInterval (function () {
   timeOutput();
 }, 60000);
+
+
+// Отображение сегодняшней даты
+
+var dateCurrent = new Date ();
+
+var options = {
+  day: 'numeric',
+  month: 'short',
+};
+
+var dataCurrentText = dateCurrent.toLocaleString("ru", options);
+dataCurrentText = dataCurrentText.slice(0, dataCurrentText.length-1);
+
+dateActive.innerHTML = dataCurrentText + " · Сегодня";
 
 
 // Появление плавающего тултипа с названием переговорки
@@ -140,8 +171,8 @@ dateActive.addEventListener("click", function () {
   dateCalendar.classList.toggle("date__calendar--shown");
 });
 
-dateCalendar.addEventListener("click", function (event) {
-  if (event.target.classList.contains("calendar__day-number")) {
+dateCalendar.addEventListener("click", function (evt) {
+  if (evt.target.classList.contains("calendar__day-number")) {
     setTimeout(function () {
       dateCalendar.classList.remove("date__calendar--shown");
     }, 350);
@@ -176,23 +207,46 @@ headerButton.addEventListener("click", function (evt) {
   inputEventEnd.value = "";
   eventUsersList.innerHTML = "";
   eventRecommendation.innerHTML = "";
-  eventWarning.style.display = "none";
 });
 
 
 // Открытие страницы с созданием встречи при клике на свободном слоте
 
-for (var i = 0; i < slotsOffTime.length; i++) {
-  onClickToggle (slotsOffTime[i], "", "floor__plus", eventOpen);
-}
+var eventOpeninRoom = function (item) {
+  item.addEventListener("click", function (evt) {
+    if (evt.target.classList.contains("floor__plus")) {
+      evt.preventDefault();
+      eventOpen ();
+    };
+  });
+};
+
+for (var i = 0; i < rowsWithRooms.length; i++) {
+  eventOpeninRoom (rowsWithRooms[i]);
+};
 
 
 // Появление тултипа с информацией о встрече и переход на страницу встречи
 
+var tooltipOnClick = function (item) {
+  item.addEventListener("click", function (evt) {
+    evt.preventDefault ();
+    item.classList.toggle("floor__event--active");
+    setTimeout (function () {
+    if (item.classList.contains("floor__event--active")) {
+      item.classList.remove("floor__event--active");
+    }
+    }, 30000);
+    if (evt.target.classList.contains("tooltip__edit")) {
+      eventEdit ();
+    };
+  });
+};
+
 for (var i = 0; i < events.length; i++) {
   var eventLeft = events[i].offsetWidth / 2 - eventTooltips[i].offsetWidth / 2;
   eventTooltips[i].style.marginLeft = eventLeft + "px";
-  onClickToggle (events[i], "floor__event--active", "tooltip__edit", eventOpen);
+  tooltipOnClick (events[i]);
 };
 
 
