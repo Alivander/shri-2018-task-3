@@ -70,9 +70,9 @@ gulp.task("clean", function () {
 });
 
 gulp.task("serve", function() {
-  server.init({
-    server: "public/"
-  });
+  // server.init({
+  //   server: "public/"
+  // });
 
   gulp.watch("*.html", ["html"]);
   gulp.watch("sass/**/*.scss", ["style"]);

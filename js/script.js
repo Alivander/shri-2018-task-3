@@ -51,24 +51,24 @@ var onClickToggle = function (item, classToggle, targerClass, targetFunc) {
   });
 };
 
-// var eventOpen = function () {
-//   eventPage.removeAttribute('style');
-//   mainPage.style.display = "none";
-//   headerButton.style.display = "none";
-// };
-//
-// var eventClose = function () {
-//   eventPage.style.display = "none";
-//   mainPage.removeAttribute('style');
-//   headerButton.removeAttribute('style');
-//   eventRecommendation.removeAttribute('style');
-//   eventWarning.removeAttribute('style');
-// }
+var eventOpen = function () {
+  eventPage.removeAttribute('style');
+  mainPage.style.display = "none";
+  headerButton.style.display = "none";
+};
+
+var eventClose = function () {
+  eventPage.style.display = "none";
+  mainPage.removeAttribute('style');
+  headerButton.removeAttribute('style');
+  eventRecommendation.removeAttribute('style');
+  eventWarning.removeAttribute('style');
+}
 
 
 //При открытии страницы
 
-// eventPage.style.display = "none";
+eventPage.style.display = "none";
 
 
 //Появление плавающего тултипа с названием переговорки
@@ -110,16 +110,10 @@ dateCalendar.addEventListener("click", function (event) {
 
 //Появление тултипа с информацией о встрече и переход на страницу встречи
 
-// for (var i = 0; i < events.length; i++) {
-//   var eventLeft = events[i].offsetWidth / 2 - eventTooltips[i].offsetWidth / 2;
-//   eventTooltips[i].style.marginLeft = eventLeft + "px";
-//   onClickToggle (events[i], "floor__event--active", "tooltip__edit", eventOpen);
-// };
-
 for (var i = 0; i < events.length; i++) {
   var eventLeft = events[i].offsetWidth / 2 - eventTooltips[i].offsetWidth / 2;
   eventTooltips[i].style.marginLeft = eventLeft + "px";
-  onClickToggle (events[i], "floor__event--active", "");
+  onClickToggle (events[i], "floor__event--active", "tooltip__edit", eventOpen);
 };
 
 
@@ -141,19 +135,19 @@ eventCalendar.addEventListener("click", function (evt) {
 
 //Открытие страницы с созданием встречи при клике на кнопку в шапке
 
-// headerButton.addEventListener("click", function (evt) {
-//   evt.preventDefault ();
-//   eventOpen ();
-//   eventRecommendation.style.display = "none";
-//   eventWarning.style.display = "none";
-// });
+headerButton.addEventListener("click", function (evt) {
+  evt.preventDefault ();
+  eventOpen ();
+  eventRecommendation.style.display = "none";
+  eventWarning.style.display = "none";
+});
 
 
 //Открытие страницы с созданием встречи при клике на свободном слоте
 
-// for (var i = 0; i < slotsOffTime.length; i++) {
-//   onClickToggle (slotsOffTime[i], "", "floor__plus", eventOpen);
-// }
+for (var i = 0; i < slotsOffTime.length; i++) {
+  onClickToggle (slotsOffTime[i], "", "floor__plus", eventOpen);
+}
 
 
 //Открытие и закрытие списка возможных участников на странице всречи
@@ -195,54 +189,54 @@ inputEventName.addEventListener("input", function () {
 
 //Выбор переговорки из предложенных
 
-// var variantOnClick = function (item) {
-//   item.addEventListener("click", function (evt) {
-//     evt.preventDefault ();
-//     var input = item.querySelector("input");
-//     if (!input.checked) {
-//       eventRecommendation.dataset.heading = "Ваша переговорка";
-//       input.checked = true;
-//       item.classList.add("event__variant--active");
-//       for (var i = 0; i < eventVariants.length; i++) {
-//         if (!eventVariants[i].classList.contains("event__variant--active")) {
-//           eventVariants[i].style.display = "none";
-//         };
-//       };
-//     } else {
-//       eventRecommendation.dataset.heading = "Рекомендованные переговорки";
-//       input.checked = false;
-//       for (var i = 0; i < eventVariants.length; i++) {
-//         eventVariants[i].removeAttribute('style');
-//         eventVariants[i].classList.remove("event__variant--active");
-//       };
-//     };
-//   });
-// };
-//
-// for (var i = 0; i < eventVariants.length; i++) {
-//   variantOnClick(eventVariants[i]);
-// };
+var variantOnClick = function (item) {
+  item.addEventListener("click", function (evt) {
+    evt.preventDefault ();
+    var input = item.querySelector("input");
+    if (!input.checked) {
+      eventRecommendation.dataset.heading = "Ваша переговорка";
+      input.checked = true;
+      item.classList.add("event__variant--active");
+      for (var i = 0; i < eventVariants.length; i++) {
+        if (!eventVariants[i].classList.contains("event__variant--active")) {
+          eventVariants[i].style.display = "none";
+        };
+      };
+    } else {
+      eventRecommendation.dataset.heading = "Рекомендованные переговорки";
+      input.checked = false;
+      for (var i = 0; i < eventVariants.length; i++) {
+        eventVariants[i].removeAttribute('style');
+        eventVariants[i].classList.remove("event__variant--active");
+      };
+    };
+  });
+};
+
+for (var i = 0; i < eventVariants.length; i++) {
+  variantOnClick(eventVariants[i]);
+};
 
 
 //Закрытие страницы встречи без сохранения
 
-// buttonTopEventClose.addEventListener("click", function () {
-//   eventClose ();
-// });
-//
-// buttonFooterEventClose.addEventListener("click", function () {
-//   eventClose ();
-// });
+buttonTopEventClose.addEventListener("click", function () {
+  eventClose ();
+});
+
+buttonFooterEventClose.addEventListener("click", function () {
+  eventClose ();
+});
 
 
 //Закрытие страницы встречи c появлением модального окна
 
-// modal.addEventListener("click", function (evt) {
-//   if (evt.target.classList.contains("modal__remove")) {
-//     eventPage.submit();
-//     eventClose ();
-//     modal.style.display = "none";
-//   } else if (evt.target.classList.contains("modal__button")) {
-//     modal.style.display = "none";
-//   };
-// });
+modal.addEventListener("click", function (evt) {
+  if (evt.target.classList.contains("modal__remove")) {
+    eventPage.submit();
+    eventClose ();
+    modal.style.display = "none";
+  } else if (evt.target.classList.contains("modal__button")) {
+    modal.style.display = "none";
+  };
+});
