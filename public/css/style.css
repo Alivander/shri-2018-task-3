@@ -1080,11 +1080,11 @@ img {
     background-color: #007DFF; }
   @media (min-width: 1280px) {
     .diagram__time-now {
-      top: 14px;
+      top: 12px;
       -webkit-transform: translateX(-180px);
               transform: translateX(-180px); }
       .diagram__time-now::after {
-        height: 12px; } }
+        height: 14px; } }
 
 .floor {
   width: 1236px;
@@ -1808,6 +1808,9 @@ img {
   @media (min-width: 904px) {
     .event__user {
       margin-right: 8px; } }
+
+.event__recommendation:empty {
+  display: none; }
 
 .event__recommendation::before {
   content: attr(data-heading);

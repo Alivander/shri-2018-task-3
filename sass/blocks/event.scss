@@ -327,13 +327,20 @@
   }
 }
 
-.event__recommendation::before {
-  content: attr(data-heading);
-  display: block;
-  width: 100%;
-  max-width: 452px;
-  padding-bottom: 4px;
-  @include font(13px, 1.23, 700);
+.event__recommendation {
+
+  &:empty {
+    display: none;
+  }
+
+  &::before {
+    content: attr(data-heading);
+    display: block;
+    width: 100%;
+    max-width: 452px;
+    padding-bottom: 4px;
+    @include font(13px, 1.23, 700);
+  }
 }
 
 .event__variant {

@@ -143,11 +143,11 @@
   }
 
   @media (min-width: $large-screen) {
-    top: 14px;
+    top: 12px;
     transform: translateX(-180px);
 
     &::after {
-      height: 12px;
+      height: 14px;
     }
   }
 }
