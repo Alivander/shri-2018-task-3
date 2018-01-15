@@ -1188,7 +1188,8 @@ img {
   display: -ms-flexbox;
   display: flex;
   width: 1056px;
-  padding: 0; }
+  padding: 0;
+  background-color: #FFFFFF; }
   @media (min-width: 1280px) {
     .floor__events {
       height: 28px; } }

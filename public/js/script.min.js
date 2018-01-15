@@ -10,8 +10,6 @@ var diagram = mainPage.querySelector(".diagram");
 var timeNow = mainPage.querySelector(".diagram__time-now");
 var timeLine = mainPage.querySelector(".diagram__time-line");
 var rowsWithRooms = mainPage.querySelectorAll(".floor__row");
-var room = mainPage.querySelector(".floor__room");
-var roomTitles = mainPage.querySelectorAll(".floor__room-title");
 var events = mainPage.querySelectorAll(".floor__event");
 var eventTooltips = mainPage.querySelectorAll(".tooltip");
 var slotsOffTime = mainPage.querySelectorAll(".floor__off-time");
@@ -100,7 +98,7 @@ var eventClose = function () {
 eventPage.style.display = "none";
 
 
-// Генерация массивов всех переговорок и всех этажей
+// Запрос данных по переговоркам
 
 var loadRooms = function () {
   var xhr = new XMLHttpRequest();
@@ -119,9 +117,15 @@ var loadRooms = function () {
       };
       ;
       renderFloors(selectitionFloors (rooms));
+      window.addEventListener("scroll", function () {
+        roomOnScroll(roomTitles);
+      });
     };
   };
 };
+
+
+// Выборка этажей
 
 var rooms = [];
 
@@ -145,26 +149,60 @@ var selectitionFloors = function (rooms) {
   return floors.sort();
 };
 
-var templateFloor = document.querySelector(".template__floor-table");
+
+// Отрисовка переговорок
+
+var templateRoom = document.querySelector(".template__room");
 
 var renderRoom = function (room) {
-  console.log(room.title);
+  var rowRoom = templateRoom.content.cloneNode(true);
+  var roomTitle = rowRoom.querySelector(".floor__room-title");
+  var roomCapacity = rowRoom.querySelector(".floor__room-capacity");
+  roomTitle.innerHTML = room.title;
+  roomCapacity.innerHTML = "до " + room.capacity + " человек";
+  return rowRoom;
 };
+
+
+// Отрисовка этажей
+
+var templateFloor = document.querySelector(".template__floor-table");
+
+var roomTitles = [];
 
 var renderFloors = function (floorsArray) {
   for (var i = 0; i < floorsArray.length; i++) {
     var floor = templateFloor.content.cloneNode(true);
     var floorNumber = floor.querySelector(".floor__number");
+    var floorBody = floor.querySelector(".floor__body");
     floorNumber.innerHTML = floorsArray[i] + " этаж";
     for (var j = 0; j < rooms.length; j++) {
       if (rooms[j].floor === floors[i]) {
-        renderRoom(rooms[j]);
+        floorBody.appendChild(renderRoom(rooms[j]));
       };
     };
     diagram.appendChild(floor);
   };
+  roomTitles = mainPage.querySelectorAll(".floor__room-title");
 };
 
+// Появление плавающего тултипа с названием переговорки
+
+var roomOnScroll = function (items) {
+  var room = mainPage.querySelector(".floor__room");
+  if (window.pageXOffset > room.offsetWidth) {
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.add("floor__room-title--tooltip");
+      items[i].style.left = window.pageXOffset + 12 + "px";
+    };
+  } else {
+    for (var j = 0; j < rooms.length; j++) {
+      if (items[j].classList.contains("floor__room-title--tooltip")) {
+        items[j].classList.remove("floor__room-title--tooltip");
+      };
+    };
+  };
+};
 
 loadRooms ();
 
@@ -274,13 +312,6 @@ eventUsersList.addEventListener("click", function (evt) {
 });
 
 
-// Запрос всех переговорок
-
-
-
-
-
-
 // Отображение текущего времени
 
 var timeOutput = function () {
@@ -323,28 +354,6 @@ var dateCurrentText = dateCurrent.toLocaleString("ru", optionsForDataInMain);
 dateCurrentText = dateCurrentText.slice(0, dateCurrentText.length-1);
 
 dateActive.innerHTML = dateCurrentText + " · Сегодня";
-
-
-// Появление плавающего тултипа с названием переговорки
-
-var roomOnScroll = function (items) {
-  if (window.pageXOffset > room.offsetWidth) {
-    for (var i = 0; i < items.length; i++) {
-      items[i].classList.add("floor__room-title--tooltip");
-      items[i].style.left = window.pageXOffset + 12 + "px";
-    };
-  } else {
-    for (var j = 0; j < roomTitles.length; j++) {
-      if (items[j].classList.contains("floor__room-title--tooltip")) {
-        items[j].classList.remove("floor__room-title--tooltip");
-      };
-    };
-  };
-};
-
-window.addEventListener("scroll", function () {
-  roomOnScroll(roomTitles);
-});
 
 
 // Открытие и закрытите календаря на главной странице
