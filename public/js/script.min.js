@@ -6,6 +6,7 @@ var headerButton = document.querySelector(".header__button");
 
 var mainPage = document.querySelector("main");
 
+var diagram = mainPage.querySelector(".diagram");
 var timeNow = mainPage.querySelector(".diagram__time-now");
 var timeLine = mainPage.querySelector(".diagram__time-line");
 var rowsWithRooms = mainPage.querySelectorAll(".floor__row");
@@ -99,7 +100,7 @@ var eventClose = function () {
 eventPage.style.display = "none";
 
 
-// Генерация списка всех переговорок
+// Генерация массивов всех переговорок и всех этажей
 
 var loadRooms = function () {
   var xhr = new XMLHttpRequest();
@@ -116,17 +117,17 @@ var loadRooms = function () {
       } catch (e) {
         alert( "Некорректный ответ " + e.message );
       };
-      floors = selectitionFloors ();
-
+      ;
+      renderFloors(selectitionFloors (rooms));
     };
   };
 };
 
-var rooms;
+var rooms = [];
 
-var floors;
+var floors = [];
 
-selectitionFloors = function () {
+var selectitionFloors = function (rooms) {
   var numberFloors = [];
   for (var i = 0; i < rooms.length; i++) {
     numberFloors[i] = rooms[i].floor;
@@ -141,7 +142,29 @@ selectitionFloors = function () {
       };
     };
   };
+  return floors.sort();
 };
+
+var templateFloor = document.querySelector(".template__floor-table");
+
+var renderRoom = function (room) {
+  console.log(room.title);
+};
+
+var renderFloors = function (floorsArray) {
+  for (var i = 0; i < floorsArray.length; i++) {
+    var floor = templateFloor.content.cloneNode(true);
+    var floorNumber = floor.querySelector(".floor__number");
+    floorNumber.innerHTML = floorsArray[i] + " этаж";
+    for (var j = 0; j < rooms.length; j++) {
+      if (rooms[j].floor === floors[i]) {
+        renderRoom(rooms[j]);
+      };
+    };
+    diagram.appendChild(floor);
+  };
+};
+
 
 loadRooms ();
 
