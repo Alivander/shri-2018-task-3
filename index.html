@@ -1653,7 +1653,7 @@
 
             <ul class="field__options event__candidates">
               <template class="template__candidate" style="display: none;">
-                <li class="field__option" data-id="">
+                <li class="field__option">
                   <span class="user user--small">
                     <img class="user__avatar" src="" width="24" height="24" alt="">
                     <span class="user__login"></span>
@@ -1666,33 +1666,17 @@
           </div>
 
           <ul class="field event__users">
-            <li class="event__user">
-              <label class="field__label">
-                <input class="visually-hidden" type="checkbox" name="Leks-Luter" checked>
-                <span class="user">
-                  <img class="user__avatar" src="http://store.bogi.ru/user_ava/120/14869/m1366477303_9448.jpg" width="24" height="24" alt="Лекс Лютер">
-                  Лекс Лютер
-                </span>
-              </label>
-            </li>
-            <li class="event__user">
-              <label class="field__label">
-                <input class="visually-hidden" type="checkbox" name="Tomas-Andersor" checked>
-                <span class="user">
-                  <img class="user__avatar" src="https://pp.userapi.com/c837335/v837335840/56653/kst4XkMWblk.jpg" width="24" height="24" alt="Томас Андерсон">
-                  Томас Андерсон
-                </span>
-              </label>
-            </li>
-            <li class="event__user">
-              <label class="field__label">
-                <input class="visually-hidden" type="checkbox" name="Darth-Vader" checked>
-                <span class="user">
-                  <img class="user__avatar" src="https://avatarchamber.com/t/0/28/avatar-movie-star-wars-and-darth-vader-7kU.jpg" width="24" height="24" alt="Дарт Вейдер">
-                  Дарт Вейдер<span class="user__home-floor">1 этаж</span>
-                </span>
-              </label>
-            </li>
+            <template class="template__event-users" style="display: none;">
+              <li class="event__user" data-id="">
+                <label class="field__label">
+                  <input class="visually-hidden" type="checkbox" name="" checked>
+                  <span class="user">
+                    <img class="user__avatar" src="" width="24" height="24" alt="">
+                    <span class="user__login"></span>
+                  </span>
+                </label>
+              </li>
+            </template>
           </ul>
 
         </div>

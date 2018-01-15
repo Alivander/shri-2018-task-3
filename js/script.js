@@ -94,7 +94,7 @@ var eventClose = function () {
 }
 
 
-// Запрос списка пользователей для поля Участники в форме
+// Запрос списка пользователей
 
 var loadUser = function (url) {
   var xhr = new XMLHttpRequest();
@@ -116,7 +116,16 @@ var loadUser = function (url) {
   };
 };
 
-var templateEventCandidate = eventCandidatesList.querySelector(".template__candidate");
+
+// При открытии страницы
+
+eventPage.style.display = "none";
+
+
+//Генерация списка всех пользователей в форме
+
+var templateEventCandidate = document.querySelector(".template__candidate");
+var templateEventUser = eventUsersList.querySelector(".template__event-users");
 
 var users = {};
 
@@ -128,6 +137,7 @@ var createEventCandidatesList = function () {
     var login = candidate.querySelector(".user__login");
     var homeFloor = candidate.querySelector(".user__home-floor");
     field.setAttribute("data-id", users[i].id);
+    field.setAttribute("data-index", i);
     avatar.setAttribute("alt", users[i].login);
     login.innerHTML = users[i].login;
     homeFloor.innerHTML = users[i].homeFloor + " этаж";
@@ -143,9 +153,58 @@ var createEventCandidatesList = function () {
 loadUser ("/graphql?query={users{id, login, avatarUrl, homeFloor}}", createEventCandidatesList);
 
 
-// При открытии страницы
+// Реализация выбора участников встречи
 
-eventPage.style.display = "none";
+var templateEventMembers = document.querySelector(".template__event-users").content;
+
+var selectEventCandidate = function (index) {
+  var member = templateEventMembers.cloneNode(true);
+  var user = member.querySelector(".event__user");
+  user.setAttribute("data-id", users[index].id);
+  user.setAttribute("data-index", index);
+  var input = member.querySelector("input");
+  input.setAttribute("name", users[index].id);
+  var avatar = member.querySelector(".user__avatar");
+  if (users[index].avatarUrl != null) {
+    avatar.setAttribute("src", users[index].avatarUrl);
+  } else {
+    avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
+  };
+  var login = member.querySelector(".user__login");
+  login.innerHTML = users[index].login;
+  eventUsersList.appendChild(member);
+};
+
+eventCandidatesList.addEventListener("click", function (evt) {
+  evt.preventDefault();
+  var target = evt.target;
+  while (!target.classList.contains("event__candidates")) {
+    if (target.classList.contains("field__option")) {
+      selectEventCandidate (target.getAttribute("data-index"));
+      return;
+    };
+    target = target.parentNode;
+  };
+});
+
+eventUsersList.addEventListener("click", function (evt) {
+  evt.preventDefault();
+  var target = event.target;
+  while (!target.classList.contains("event__users")) {
+    if (target.classList.contains("event__user")) {
+      eventUsersList.removeChild(target);
+      return;
+    };
+    target = target.parentNode;
+  };
+});
+
+
+// Генерация списка этажей
+
+
+
+
 
 
 // Отображение текущего времени
@@ -317,8 +376,10 @@ inputEventCandidate.addEventListener("focus", function () {
 
 inputEventCandidate.addEventListener("blur", function () {
   if (eventCandidatesList.classList.contains("event__candidates--shown")) {
-    eventCandidatesList.classList.remove("event__candidates--shown");
-    buttonOpenCandidates.style.display = "none";
+    setTimeout (function () {
+      eventCandidatesList.classList.remove("event__candidates--shown");
+      buttonOpenCandidates.style.display = "none";
+    }, 250);
   };
   if (inputEventCandidate.value) {
     buttonResetInputCandidate.removeAttribute('style');

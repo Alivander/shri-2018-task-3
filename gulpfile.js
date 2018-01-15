@@ -42,7 +42,7 @@ gulp.task("style", function () {
 gulp.task("script", function () {
 	return gulp.src("js/**/*.js")
     .pipe(plumber())
-    .pipe(jsmin())
+    // .pipe(jsmin())
     .pipe(rename({suffix: ".min"}))
     .pipe(gulp.dest("public/js"))
     .pipe(server.stream());
