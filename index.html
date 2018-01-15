@@ -1642,7 +1642,7 @@
 
             <span class="field__label">
               <label class="field__text" for="event-participants">Участники</label>
-              <input class="field__input" type="text" id="event-participants" placeholder="Например, Тор Одинович">
+              <input class="field__input" type="text" id="event-participants" placeholder="Например, Тор Одинович" autocomplete="off">
               <button class="field__button field__button--reset" type="button" style="display: none;">
                 <span class="visually-hidden">Очистить поле</span>
               </button>
@@ -1652,30 +1652,15 @@
             </span>
 
             <ul class="field__options event__candidates">
-              <li class="field__option">
-                <span class="user user--small">
-                  <img class="user__avatar" src="http://store.bogi.ru/user_ava/120/14869/m1366477303_9448.jpg" width="24" height="24" alt="Лекс Лютер">
-                  Лекс Лютер<span class="user__home-floor">7 этаж</span>
-                </span>
-              </li>
-              <li class="field__option">
-                <span class="user user--small">
-                  <img class="user__avatar" src="https://pp.userapi.com/c837335/v837335840/56653/kst4XkMWblk.jpg" width="24" height="24" alt="Томас Андерсон">
-                  Томас Андерсон<span class="user__home-floor">2 этаж</span>
-                </span>
-              </li>
-              <li class="field__option">
-                <span class="user user--small">
-                  <img class="user__avatar" src="https://avatarchamber.com/t/0/28/avatar-movie-star-wars-and-darth-vader-7kU.jpg" width="24" height="24" alt="Дарт Вейдер">
-                  Дарт Вейдер<span class="user__home-floor">1 этаж</span>
-                </span>
-              </li>
-              <li class="field__option">
-                <span class="user user--small">
-                  <img class="user__avatar" src="https://pp.userapi.com/c9454/u119624833/e_797ddd49.jpg" width="24" height="24" alt="Кларк Кент">
-                  Кларк Кент<span class="user__home-floor">2 этаж</span>
-                </span>
-              </li>
+              <template class="template__candidate" style="display: none;">
+                <li class="field__option" data-id="">
+                  <span class="user user--small">
+                    <img class="user__avatar" src="" width="24" height="24" alt="">
+                    <span class="user__login"></span>
+                    <span class="user__home-floor"></span>
+                  </span>
+                </li>
+              </template>
             </ul>
 
           </div>
@@ -1764,6 +1749,7 @@
     </div>
 
     <script src="js/script.min.js"></script>
+    <script src="js/get-recomendation.min.js"></script>
 
   </body>
 </html>

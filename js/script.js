@@ -1,5 +1,7 @@
 "use strict";
 
+var dateCurrent = new Date ();
+
 var headerButton = document.querySelector(".header__button");
 
 var mainPage = document.querySelector("main");
@@ -92,6 +94,55 @@ var eventClose = function () {
 }
 
 
+// Запрос списка пользователей для поля Участники в форме
+
+var loadUser = function (url) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url);
+  xhr.send();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState != 4) return;
+    if (xhr.status != 200) {
+      console.log(xhr.status + ": " + xhr.statusText);
+      return;
+    } else {
+      try {
+        users = (JSON.parse(xhr.responseText)).data.users;
+      } catch (e) {
+        alert( "Некорректный ответ " + e.message );
+      };
+      createEventCandidatesList ();
+    };
+  };
+};
+
+var templateEventCandidate = eventCandidatesList.querySelector(".template__candidate");
+
+var users = {};
+
+var createEventCandidatesList = function () {
+  for (var i = 0; i < users.length; i++) {
+    var candidate = templateEventCandidate.content.cloneNode(true);
+    var field = candidate.querySelector(".field__option");
+    var avatar = candidate.querySelector(".user__avatar");
+    var login = candidate.querySelector(".user__login");
+    var homeFloor = candidate.querySelector(".user__home-floor");
+    field.setAttribute("data-id", users[i].id);
+    avatar.setAttribute("alt", users[i].login);
+    login.innerHTML = users[i].login;
+    homeFloor.innerHTML = users[i].homeFloor + " этаж";
+    if (users[i].avatarUrl != null) {
+      avatar.setAttribute("src", users[i].avatarUrl);
+    } else {
+      avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
+    };
+    eventCandidatesList.appendChild(candidate);
+  };
+};
+
+loadUser ("/graphql?query={users{id, login, avatarUrl, homeFloor}}", createEventCandidatesList);
+
+
 // При открытии страницы
 
 eventPage.style.display = "none";
@@ -130,17 +181,15 @@ var timeOutputUpdate = setInterval (function () {
 
 // Отображение сегодняшней даты
 
-var dateCurrent = new Date ();
-
-var options = {
+var optionsForDataInMain = {
   day: 'numeric',
   month: 'short',
 };
 
-var dataCurrentText = dateCurrent.toLocaleString("ru", options);
-dataCurrentText = dataCurrentText.slice(0, dataCurrentText.length-1);
+var dateCurrentText = dateCurrent.toLocaleString("ru", optionsForDataInMain);
+dateCurrentText = dateCurrentText.slice(0, dateCurrentText.length-1);
 
-dateActive.innerHTML = dataCurrentText + " · Сегодня";
+dateActive.innerHTML = dateCurrentText + " · Сегодня";
 
 
 // Появление плавающего тултипа с названием переговорки
@@ -212,10 +261,19 @@ headerButton.addEventListener("click", function (evt) {
 
 // Открытие страницы с созданием встречи при клике на свободном слоте
 
+var optionsForDateInEvent = {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+};
+
 var eventOpeninRoom = function (item) {
   item.addEventListener("click", function (evt) {
     if (evt.target.classList.contains("floor__plus")) {
       evt.preventDefault();
+      var titleCurrentRoom = item.querySelector(".floor__room-title");
+      var inputText = dateCurrent.toLocaleString("ru", optionsForDateInEvent);
+      inputEventDate.value = inputText.slice(0, inputText.length - 8) + ", " + inputText.slice(inputText.length - 7, inputText.length - 3);
       eventOpen ();
     };
   });

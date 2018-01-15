@@ -83,6 +83,7 @@
 
     @media (min-width: $large-screen) {
       position: sticky;
+      z-index: 500;
       top: 72px;
       width: 1056px;
       padding: 16px 0;

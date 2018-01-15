@@ -1030,6 +1030,7 @@ img {
       .diagram__time {
         position: -webkit-sticky;
         position: sticky;
+        z-index: 500;
         top: 72px;
         width: 1056px;
         padding: 16px 0; } }
