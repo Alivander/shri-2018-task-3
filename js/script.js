@@ -315,6 +315,17 @@ headerButton.addEventListener("click", function (evt) {
   inputEventEnd.value = "";
   eventUsersList.innerHTML = "";
   eventRecommendation.innerHTML = "";
+  inputEventStart.addEventListener("input", function (evt) {
+    if (inputEventStart.value.length == 2) {
+    if (inputEventStart.value && inputEventEnd.value) {
+      eventRecommendation.innerHTML = "Подбор переговорок...";
+    };
+  });
+  inputEventEnd.addEventListener("input", function (evt) {
+    if (inputEventStart.value && inputEventEnd.value) {
+      eventRecommendation.innerHTML = "Подбор переговорок...";
+    };
+  });
 });
 
 
