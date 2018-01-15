@@ -1732,6 +1732,56 @@
       </div>
     </div>
 
+    <template class="template__floor-table" style="display: none;">
+      <table class="floor">
+
+        <caption class="floor__caption">
+          <h3 class="floor__number"></h3>
+        </caption>
+
+        <tbody class="floor__body"></tbody>
+
+      </table>
+    </template>
+
+    <template class="template__room" style="display: none;">
+      <tr class="floor__row">
+
+        <td class="floor__room">
+          <h4 class="floor__room-title"></h4>
+          <span class="floor__room-capacity"></span>
+        </td>
+
+        <td class="floor__events"></td>
+
+      </tr>
+    </template>
+
+    <template class="template__event-slot" style="display: none;">
+      <div class="floor__event" tabindex="0" style="width: 66px;">
+        <div class="tooltip floor__tooltip">
+          <h5 class="tooltip__title">Рассуждения о высоком</h5>
+          <p class="tooltip__info"></p>
+          <p class="tooltip__users">
+            <b class="user tooltip__first-user">
+              <img class="user__avatar" src="" width="24" height="24" alt="">
+              <span class="user__login"></span>
+            </b>
+            <span class="tooltip__caunt-users"></span>
+          </p>
+          <a class="round-button round-button--edit tooltip__edit" href="#"><span class="visually-hidden">Редактировать встречу</span></a>
+        </div>
+      </div>
+    </template>
+
+    <template class="template__off-time-slot" style="display: none;">
+      <div class="floor__off-time" style="width: 15px;">
+        <button class="button button--blue button--plus floor__plus" type="button">
+          <span class="visually-hidden">Создать встречу в этой переговорке</span>
+        </button>
+      </div>
+    </template>
+
     <script src="js/script.min.js"></script>
     <script src="js/get-recomendation.min.js"></script>
 
