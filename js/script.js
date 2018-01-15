@@ -94,11 +94,63 @@ var eventClose = function () {
 }
 
 
-// Запрос списка пользователей
+// При открытии страницы
 
-var loadUser = function (url) {
+eventPage.style.display = "none";
+
+
+// Генерация списка всех переговорок
+
+var loadRooms = function () {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', url);
+  xhr.open('GET', "/graphql?query={rooms{id, title, capacity, floor}}");
+  xhr.send();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState != 4) return;
+    if (xhr.status != 200) {
+      console.log(xhr.status + ": " + xhr.statusText);
+      return;
+    } else {
+      try {
+        rooms = (JSON.parse(xhr.responseText)).data.rooms;
+      } catch (e) {
+        alert( "Некорректный ответ " + e.message );
+      };
+      floors = selectitionFloors ();
+
+    };
+  };
+};
+
+var rooms;
+
+var floors;
+
+selectitionFloors = function () {
+  var numberFloors = [];
+  for (var i = 0; i < rooms.length; i++) {
+    numberFloors[i] = rooms[i].floor;
+  };
+  for (var i = 0; i < numberFloors.length; i++) {
+    if (numberFloors[i] != null) {
+      floors.push(numberFloors[i]);
+    };
+    for (var j = i + 1; j < numberFloors.length; j++) {
+      if (numberFloors[j] === numberFloors[i]) {
+        numberFloors[j] = null;
+      };
+    };
+  };
+};
+
+loadRooms ();
+
+
+//Генерация списка всех пользователей в форме
+
+var loadUsers = function () {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "/graphql?query={users{id, login, avatarUrl, homeFloor}}");
   xhr.send();
   xhr.onreadystatechange = function() {
     if (xhr.readyState != 4) return;
@@ -116,18 +168,10 @@ var loadUser = function (url) {
   };
 };
 
-
-// При открытии страницы
-
-eventPage.style.display = "none";
-
-
-//Генерация списка всех пользователей в форме
-
 var templateEventCandidate = document.querySelector(".template__candidate");
 var templateEventUser = eventUsersList.querySelector(".template__event-users");
 
-var users = {};
+var users;
 
 var createEventCandidatesList = function () {
   for (var i = 0; i < users.length; i++) {
@@ -150,10 +194,10 @@ var createEventCandidatesList = function () {
   };
 };
 
-loadUser ("/graphql?query={users{id, login, avatarUrl, homeFloor}}", createEventCandidatesList);
+loadUsers ();
 
 
-// Реализация выбора участников встречи
+// Выбор участников встречи
 
 var templateEventMembers = document.querySelector(".template__event-users").content;
 
@@ -181,11 +225,15 @@ eventCandidatesList.addEventListener("click", function (evt) {
   while (!target.classList.contains("event__candidates")) {
     if (target.classList.contains("field__option")) {
       selectEventCandidate (target.getAttribute("data-index"));
+      target.style.display = "none";
       return;
     };
     target = target.parentNode;
   };
 });
+
+
+// Удаление участников встречи
 
 eventUsersList.addEventListener("click", function (evt) {
   evt.preventDefault();
@@ -193,6 +241,9 @@ eventUsersList.addEventListener("click", function (evt) {
   while (!target.classList.contains("event__users")) {
     if (target.classList.contains("event__user")) {
       eventUsersList.removeChild(target);
+      var index = "[data-id=\"" + target.getAttribute("data-id") + "\"]";
+      var candidate = eventCandidatesList.querySelector(index);
+      candidate.removeAttribute("style");
       return;
     };
     target = target.parentNode;
@@ -200,7 +251,7 @@ eventUsersList.addEventListener("click", function (evt) {
 });
 
 
-// Генерация списка этажей
+// Запрос всех переговорок
 
 
 
@@ -316,7 +367,6 @@ headerButton.addEventListener("click", function (evt) {
   eventUsersList.innerHTML = "";
   eventRecommendation.innerHTML = "";
   inputEventStart.addEventListener("input", function (evt) {
-    if (inputEventStart.value.length == 2) {
     if (inputEventStart.value && inputEventEnd.value) {
       eventRecommendation.innerHTML = "Подбор переговорок...";
     };
