@@ -35,7 +35,7 @@ npm i
 npm run dev
 ```
 
-Опубликованная сборка: https://alivander.github.io/shri-2018-task-3.github.io
+Опубликованная главная страница: https://alivander.github.io/shri-2018-task-3/public/index.html
 
 
 # Процесс
