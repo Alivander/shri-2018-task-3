@@ -164,6 +164,7 @@ var loadEvents = function () {
       } catch (e) {
         alert( "Некорректный ответ " + e.message );
       };
+      sortAnEvents(events);
       loadRooms();
     };
 
@@ -206,6 +207,24 @@ var loadRooms = function () {
 var events;
 var templateEvent = document.querySelector(".template__event-slot");
 
+var sortAnEvents = function (eventsArray) {
+  console.log(eventsArray);
+  for (var i = 0; i < eventsArray.length - 1; i++) {
+    var before = Date.parse(eventsArray[i].dateStart);
+    for (var j = i + 1 ; j < eventsArray.length; j++) {
+      var current = Date.parse(eventsArray[j].dateStart);
+      console.log(before, current);
+      if (current < before) {
+        before = current;
+        var swap = eventsArray[i];
+        eventsArray[i] = eventsArray[j];
+        eventsArray[j] = swap;
+      };
+    };
+  };
+  console.log(eventsArray);
+};
+
 var renderEvents = function (room, eventRow, eventsArray) {
 
   var fragmentRoom = document.createDocumentFragment();
@@ -215,6 +234,7 @@ var renderEvents = function (room, eventRow, eventsArray) {
     if (room.id === eventsArray[i].room.id) {
 
       var eventSlot = templateEvent.content.cloneNode(true);
+      var eventSlotInner = eventSlot.querySelector(".floor__event");
       var eventTooltip = eventSlot.querySelector(".tooltip");
       var eventTitle = eventSlot.querySelector(".tooltip__title");
       var eventInfo = eventSlot.querySelector(".tooltip__info");
@@ -223,18 +243,20 @@ var renderEvents = function (room, eventRow, eventsArray) {
         month: 'long',
         day: 'numeric',
         hour: 'numeric',
-        minute: 'numeric',
+        minute: 'numeric'
       };
       var eventEnd = new Date (Date.parse(eventsArray[i].dateEnd));
       var optionsEnd = {
         hour: 'numeric',
-        minute: 'numeric',
+        minute: 'numeric'
       };
       var avatar = eventSlot.querySelector(".user__avatar");
       var login = eventSlot.querySelector(".user__login");
       var cauntMembers = eventSlot.querySelector(".tooltip__caunt-users");
 
+      eventSlotInner.style.width = (eventEnd - eventStart) / 60000 * 1.1 + "px";
       eventTooltip.setAttribute("data-id", eventsArray[i].id);
+      eventTooltip.setAttribute("data-index", i);
       eventTitle.innerHTML = eventsArray[i].title;
       eventInfo.innerHTML = eventStart.toLocaleString("ru", optionsStart) + "—" + eventEnd.toLocaleString("ru", optionsEnd) + " · " + room.title;
       avatar.setAttribute("alt", eventsArray[i].users[1].login);
