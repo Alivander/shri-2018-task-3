@@ -4,28 +4,6 @@
   @include font(15px, 1.13, inherit);
   color: #000000;
 
-  &__avatar {
-    width: 32px;
-    height: 32px;
-    margin-right: 8px;
-    border-radius: 50%;
-
-    @media (min-width: $medium-screen) {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  &__home-floor {
-    color: $grey-7;
-
-    &::before {
-      content: "·";
-      display: inline-block;
-      margin: 4px;
-    }
-  }
-
   &--small {
     font-size: 13px;
     line-height: 1.23;
@@ -38,5 +16,27 @@
 
   @media (min-width: $medium-screen) {
     font-size: 13px;
+  }
+}
+
+.user__avatar {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  border-radius: 50%;
+
+  @media (min-width: $medium-screen) {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.user__home-floor {
+  color: $grey-7;
+
+  &::before {
+    content: "·";
+    display: inline-block;
+    margin: 4px;
   }
 }

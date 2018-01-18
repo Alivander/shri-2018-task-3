@@ -12,30 +12,30 @@
     min-height: 46px;
     padding: 11px 25px 11px;
   }
+}
 
-  &__active-date {
-    margin: 0;
-    padding: 0;
-    @include font(15px, 1.2, 500);
-    font-family: inherit;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-  }
+.date__active-date {
+  margin: 0;
+  padding: 0;
+  @include font(15px, 1.2, 500);
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
 
-  &__overlay {
-    position: fixed;
-    top: 104px;
-    left: 0;
-    z-index: 500;
-    width: 100vw;
-    height: calc(100vh - 104px);
-    background-color: rgba(0, 16, 33, 0.8);
-    opacity: 0;
-    transition-duration: 0.2s;
-    transform: scaleY(0);
-    transform-origin: center top;
-  }
+.date__overlay {
+  position: fixed;
+  top: 104px;
+  left: 0;
+  z-index: 500;
+  width: 100vw;
+  height: calc(100vh - 104px);
+  background-color: rgba(0, 16, 33, 0.8);
+  opacity: 0;
+  transition-duration: 0.2s;
+  transform: scaleY(0);
+  transform-origin: center top;
 }
 
 .date__calendar {

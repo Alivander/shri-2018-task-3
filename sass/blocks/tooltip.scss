@@ -21,48 +21,48 @@
   @media (min-width: $large-screen) {
     width: 338px;
   }
+}
 
-  &__title {
-    margin: 0;
-    margin-bottom: 10px;
-    @include font(20px, 1.2, 700);
+.tooltip__title {
+  margin: 0;
+  margin-bottom: 10px;
+  @include font(20px, 1.2, 700);
 
-    @media (min-width: $large-screen) {
-      font-size: 15px;
-      margin-bottom: 7px;
-    }
+  @media (min-width: $large-screen) {
+    font-size: 15px;
+    margin-bottom: 7px;
   }
+}
 
-  &__info {
-    margin: 0;
-    margin-bottom: 15px;
-    @include font(15px, 1.13);
+.tooltip__info {
+  margin: 0;
+  margin-bottom: 15px;
+  @include font(15px, 1.13);
 
-    @media (min-width: $large-screen) {
-      font-size: 13px;
-    }
+  @media (min-width: $large-screen) {
+    font-size: 13px;
   }
+}
 
-  &__users {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    @include font(15px, 1.13);
-    color: $grey-7;
-  }
+.tooltip__users {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  @include font(15px, 1.13);
+  color: $grey-7;
+}
 
-  &__first-user {
-    margin-right: 5px;
-  }
+.tooltip__first-user {
+  margin-right: 5px;
+}
 
-  &__edit {
-    position: absolute;
-    top: 16px;
-    right: 16px;
+.tooltip__edit {
+  position: absolute;
+  top: 16px;
+  right: 16px;
 
-    @media (min-width: $large-screen) {
-      top: 8px;
-      right: 8px;
-    }
+  @media (min-width: $large-screen) {
+    top: 8px;
+    right: 8px;
   }
 }

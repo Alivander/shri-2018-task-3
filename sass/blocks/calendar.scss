@@ -12,42 +12,25 @@
     padding: 16px 13px;
     border-radius: 4px;
   }
+}
 
-  &__prev {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-  }
+.calendar__prev {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
 
-  &__next {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-  }
+.calendar__next {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
 
-  &__month {
-    padding: 0 7px;
+.calendar__month {
+  padding: 0 7px;
 
-    @media (min-width: 1280px) {
-      padding: 0 3px;
-    }
-  }
-
-  &__day-names {
-    display: flex;
-    margin: 0;
-    margin-bottom: 10px;
-    padding: 0;
-    list-style: none;
-
-  }
-
-  &__days {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  @media (min-width: 1280px) {
+    padding: 0 3px;
   }
 }
 
@@ -63,6 +46,23 @@
     padding: 3px 24px 4px;
     font-size: 15px;
   }
+}
+
+.calendar__day-names {
+  display: flex;
+  margin: 0;
+  margin-bottom: 10px;
+  padding: 0;
+  list-style: none;
+
+}
+
+.calendar__days {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .calendar__day-number {

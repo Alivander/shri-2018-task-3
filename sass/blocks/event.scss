@@ -10,48 +10,48 @@
   @media (min-width: $large-screen) {
     padding-top: 0;
   }
+}
 
-  &__main {
-    position: relative;
-    width: 100%;
-    max-width: $medium-screen;
+.event__main {
+  position: relative;
+  width: 100%;
+  max-width: $medium-screen;
 
-    @media (min-width: $medium-screen) {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-    }
-  }
-
-  &__footer {
-    position: sticky;
-    right: 0;
-    bottom: 0;
+  @media (min-width: $medium-screen) {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
     flex-wrap: wrap;
-    width: 100%;
-    margin-top: auto;
-    padding: 16px 8px 22px;
-    background-color: #FFFFFF;
-
-    @media (min-width: $medium-screen) {
-      padding: 20px;
-      border-top: 1px solid $grey-2;
-    }
+    align-items: flex-start;
   }
+}
 
-  &__container {
-    width: 100%;
-    max-width: 452px;
-    margin: 0 auto;
-    text-align: right;
+.event__footer {
+  position: sticky;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: auto;
+  padding: 16px 8px 22px;
+  background-color: #FFFFFF;
 
-    @media (min-width: $medium-screen) {
-      padding-top: 0;
-      text-align: center;
-    }
+  @media (min-width: $medium-screen) {
+    padding: 20px;
+    border-top: 1px solid $grey-2;
+  }
+}
+
+.event__container {
+  width: 100%;
+  max-width: 452px;
+  margin: 0 auto;
+  text-align: right;
+
+  @media (min-width: $medium-screen) {
+    padding-top: 0;
+    text-align: center;
   }
 }
 

@@ -47,74 +47,73 @@
     padding-top: 0;
     background-image: linear-gradient(to right, #FFFFFF 0px, #FFFFFF 245px, $grey-1 245px, $grey-1 246px, transparent 246px, transparent 100%);
   }
+}
 
-  &__date {
-    position: fixed;
-    top: 49px;
-    width: 100%;
-    z-index: 500;
-    background-color: #FFFFFF;
+.diagram__date {
+  position: fixed;
+  top: 49px;
+  width: 100%;
+  z-index: 500;
+  background-color: #FFFFFF;
 
-    @media (min-width: $large-screen) {
-      position: sticky;
-      top: 72px;
-      width: 245px;
-      z-index: 500;
-    }
-  }
-
-  &__time {
+  @media (min-width: $large-screen) {
     position: sticky;
-    top: 104px;
-    left: 50px;
-    z-index: 400;
-    display: flex;
-    width: 1236px;
-    margin: 0;
-    padding: 9px 0 10px 182px;
-    @include font(11px, 1.18, 700);
-    text-align: center;
-    color: #252525;
-    letter-spacing: 0.4px;
-    background-color: #FFFFFF;
-    border-top: 1px solid $grey-2;
-    border-bottom: 1px solid $grey-2;
-    list-style: none;
-
-    @media (min-width: $large-screen) {
-      position: sticky;
-      z-index: 500;
-      top: 72px;
-      width: 1056px;
-      padding: 16px 0;
-    }
+    top: 72px;
+    width: 245px;
+    z-index: 500;
   }
+}
 
-  &__time-line {
-    position: absolute;
-    top: 137px;
-    left: 180px;
-    z-index: 50;
-    width: 1px;
-    height: calc(100% - 137px);
-    background-color: $blue-2;
+.diagram__time {
+  position: sticky;
+  top: 104px;
+  left: 50px;
+  z-index: 400;
+  display: flex;
+  width: 1236px;
+  margin: 0;
+  padding: 9px 0 10px 182px;
+  @include font(11px, 1.18, 700);
+  text-align: center;
+  color: #252525;
+  letter-spacing: 0.4px;
+  background-color: #FFFFFF;
+  border-top: 1px solid $grey-2;
+  border-bottom: 1px solid $grey-2;
+  list-style: none;
 
-    @media (min-width: $large-screen) {
-      top: 118px;
-      height: calc(100% - 118px);
-      transform: translateX(65px);
-    }
+  @media (min-width: $large-screen) {
+    position: sticky;
+    z-index: 500;
+    top: 72px;
+    width: 1056px;
+    padding: 16px 0;
   }
+}
 
-  &__hour {
-    flex-shrink: 0;
-    width: 66px;
+.diagram__time-line {
+  position: absolute;
+  top: 137px;
+  left: 180px;
+  z-index: 50;
+  width: 1px;
+  height: calc(100% - 137px);
+  background-color: $blue-2;
+
+  @media (min-width: $large-screen) {
+    top: 118px;
+    height: calc(100% - 118px);
+    transform: translateX(65px);
   }
+}
 
-  &__hour--disabled {
+.diagram__hour {
+  flex-shrink: 0;
+  width: 66px;
+
+  &--disabled {
     color: $grey-7;
   }
-
 }
 
 .diagram__time-now {

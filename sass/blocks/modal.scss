@@ -11,30 +11,30 @@
   padding-bottom: 24px;
   background-color: rgba(0, 16, 33, 0.8);
 
-  &__title {
-    display: block;
-    margin-bottom: 24px;
-    @include font(20px, 1.4, 700);
-  }
-
-  &__info {
-    margin: 0;
-    margin-bottom: 30px;
-    @include font(15px, 1.5);
-  }
-
-  &__button {
-    margin: 0 6px;
-  }
-
-  &__button--blue {
-    padding-right: 30px;
-    padding-left: 30px;
-  }
-
   @media (min-width: $medium-screen) {
     align-items: center;
     background: rgba(0,16,33,0.40);
+  }
+}
+
+.modal__title {
+  display: block;
+  margin-bottom: 24px;
+  @include font(20px, 1.4, 700);
+}
+
+.modal__info {
+  margin: 0;
+  margin-bottom: 30px;
+  @include font(15px, 1.5);
+}
+
+.modal__button {
+  margin: 0 6px;
+
+  &--blue {
+    padding-right: 30px;
+    padding-left: 30px;
   }
 }
 

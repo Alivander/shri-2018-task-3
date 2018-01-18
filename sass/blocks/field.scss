@@ -6,68 +6,68 @@
   width: 100%;
   max-width: 452px;
 
-  &__label {
-    display: block;
+  @media (min-width: $medium-screen) {
+    min-width: 72px;
+  }
+}
+
+.field__label {
+  display: block;
+}
+
+.field__text {
+  display: block;
+  padding-bottom: 4px;
+  @include font(13px, 1.23, 700);
+}
+
+.field__input {
+  flex-grow: 1;
+  display: block;
+  min-width: 100%;
+  width: 72px;
+  padding: 12px 30px 12px 8px;
+  @include font(15px, 1.13, 500);
+  font-family: inherit;
+  border: 2px solid $grey-2;
+  border-radius: 4px;
+  outline: none;
+
+
+  &:focus,
+  &:hover {
+    border-color: $blue-2;
   }
 
-  &__text {
-    display: block;
-    padding-bottom: 4px;
-    @include font(13px, 1.23, 700);
-  }
-
-  &__input {
-    flex-grow: 1;
-    display: block;
-    min-width: 100%;
-    width: 72px;
-    padding: 12px 30px 12px 8px;
-    @include font(15px, 1.13, 500);
-    font-family: inherit;
-    border: 2px solid $grey-2;
-    border-radius: 4px;
-    outline: none;
-
-
-    &:focus,
-    &:hover {
-      border-color: $blue-2;
-    }
-
-    &::placeholder {
-      font-weight: 400;
-      color: $grey-7;
-    }
-
-    @media (min-width: $medium-screen) {
-      padding: 10px 30px 10px 8px;
-      font-size: 13px;
-      letter-spacing: 0.47px;
-    }
-  }
-
-  &__options {
-    width: calc(100% - 4px);
-    margin: 0;
-    padding: 0;
-    background-color: #FFFFFF;
-    box-shadow: 0 1px 10px 0 rgba(0,44,92,0.28);
-    border-radius: 4px;
-    list-style: none;
-  }
-
-  &__option {
-    padding: 5px 16px;
-    cursor: pointer;
-  }
-
-  &__option:active {
-    font-weight: 700;
-    background-color: $grey-1;
+  &::placeholder {
+    font-weight: 400;
+    color: $grey-7;
   }
 
   @media (min-width: $medium-screen) {
-    min-width: 72px;
+    padding: 10px 30px 10px 8px;
+    font-size: 13px;
+    letter-spacing: 0.47px;
+  }
+}
+
+.field__options {
+  width: calc(100% - 4px);
+  margin: 0;
+  padding: 0;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 10px 0 rgba(0,44,92,0.28);
+  border-radius: 4px;
+  list-style: none;
+}
+
+.field__option {
+  padding: 5px 16px;
+  cursor: pointer;
+
+  &:active {
+    font-weight: 700;
+    background-color: $grey-1;
   }
 }
 
