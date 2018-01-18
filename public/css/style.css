@@ -1195,6 +1195,7 @@ img {
       height: 28px; } }
 
 .floor__event {
+  position: relative;
   -ms-flex-negative: 0;
       flex-shrink: 0;
   min-width: 10px;
@@ -1215,8 +1216,13 @@ img {
 
 .floor__tooltip {
   position: absolute;
+  left: 50%;
+  margin-left: -180px;
   -webkit-transform: scale(0);
           transform: scale(0); }
+  @media (min-width: 1280px) {
+    .floor__tooltip {
+      margin-left: -169px; } }
 
 .floor__off-time {
   position: relative;

@@ -10,7 +10,6 @@ var diagram = mainPage.querySelector(".diagram");
 var timeNow = mainPage.querySelector(".diagram__time-now");
 var timeLine = mainPage.querySelector(".diagram__time-line");
 var rowsWithRooms = mainPage.querySelectorAll(".floor__row");
-var events = mainPage.querySelectorAll(".floor__event");
 var eventTooltips = mainPage.querySelectorAll(".tooltip");
 var slotsOffTime = mainPage.querySelectorAll(".floor__off-time");
 var date = mainPage.querySelector(".date");
@@ -98,7 +97,30 @@ var eventClose = function () {
 eventPage.style.display = "none";
 
 
-// Запрос данных по переговоркам
+// Запрос данных о встречах
+
+var loadEvents = function () {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "/graphql?query={events{id, title, dateStart, dateEnd, users {id, login, avatarUrl, homeFloor}, room {id, title, capacity, floor}}}");
+  xhr.send();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState != 4) return;
+    if (xhr.status != 200) {
+      console.log(xhr.status + ": " + xhr.statusText);
+      return;
+    } else {
+      try {
+        events = (JSON.parse(xhr.responseText)).data.events;
+      } catch (e) {
+        alert( "Некорректный ответ " + e.message );
+      };
+      loadRooms();
+    };
+  };
+};
+
+
+// Запрос данных о переговорках
 
 var loadRooms = function () {
   var xhr = new XMLHttpRequest();
@@ -115,13 +137,75 @@ var loadRooms = function () {
       } catch (e) {
         alert( "Некорректный ответ " + e.message );
       };
-      ;
-      renderFloors(selectitionFloors (rooms));
+      renderFloors(selectitionFloors(rooms), rooms);
       window.addEventListener("scroll", function () {
         roomOnScroll(roomTitles);
       });
     };
   };
+};
+
+
+// Отрисовка встреч
+
+var events;
+var templateEvent = document.querySelector(".template__event-slot");
+
+var renderEvents = function (room, eventRow, eventsArray) {
+  var fragmentRoom = document.createDocumentFragment();
+  for (var i = 0; i < eventsArray.length; i++) {
+    if (room.id === eventsArray[i].room.id) {
+      var eventSlot = templateEvent.content.cloneNode(true);
+      var eventTooltip = eventSlot.querySelector(".tooltip");
+      eventTooltip.setAttribute("data-id", eventsArray[i].id);
+      var eventTitle = eventSlot.querySelector(".tooltip__title");
+      eventTitle.innerHTML = eventsArray[i].title;
+      var eventInfo = eventSlot.querySelector(".tooltip__info");
+      var eventStart = new Date (Date.parse(eventsArray[i].dateStart));
+      var optionsStart = {
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      };
+      var eventEnd = new Date (Date.parse(eventsArray[i].dateEnd));
+      var optionsEnd = {
+        hour: 'numeric',
+        minute: 'numeric',
+      };
+      eventInfo.innerHTML = eventStart.toLocaleString("ru", optionsStart) + "—" + eventEnd.toLocaleString("ru", optionsEnd) + " · " + room.title;
+      var avatar = eventSlot.querySelector(".user__avatar");
+      var login = eventSlot.querySelector(".user__login");
+      avatar.setAttribute("alt", eventsArray[i].users[1].login);
+      login.innerHTML = eventsArray[i].users[1].login;
+      if (eventsArray[i].users[1].avatarUrl != null) {
+        avatar.setAttribute("src", eventsArray[i].users[1].avatarUrl);
+      } else {
+        avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
+      };
+      var cauntMembers = eventSlot.querySelector(".tooltip__caunt-users");
+      cauntMembers.innerHTML = " и еще" + (eventsArray[i].users.length - 1) + " человек";
+      tooltipOnClick (eventTooltip.parentNode);
+      fragmentRoom.appendChild(eventSlot);
+    };
+  };
+  eventRow.appendChild(fragmentRoom);
+};
+
+
+// Отрисовка переговорок
+
+var templateRoom = document.querySelector(".template__room");
+
+var renderRoom = function (room) {
+  var rowRoom = templateRoom.content.cloneNode(true);
+  var roomTitle = rowRoom.querySelector(".floor__room-title");
+  var roomCapacity = rowRoom.querySelector(".floor__room-capacity");
+  var roomEvents = rowRoom.querySelector(".floor__events");
+  roomTitle.innerHTML = room.title;
+  roomCapacity.innerHTML = "до " + room.capacity + " человек";
+  renderEvents(room, roomEvents, events);
+  return rowRoom;
 };
 
 
@@ -150,41 +234,28 @@ var selectitionFloors = function (rooms) {
 };
 
 
-// Отрисовка переговорок
-
-var templateRoom = document.querySelector(".template__room");
-
-var renderRoom = function (room) {
-  var rowRoom = templateRoom.content.cloneNode(true);
-  var roomTitle = rowRoom.querySelector(".floor__room-title");
-  var roomCapacity = rowRoom.querySelector(".floor__room-capacity");
-  roomTitle.innerHTML = room.title;
-  roomCapacity.innerHTML = "до " + room.capacity + " человек";
-  return rowRoom;
-};
-
-
 // Отрисовка этажей
 
 var templateFloor = document.querySelector(".template__floor-table");
 
 var roomTitles = [];
 
-var renderFloors = function (floorsArray) {
+var renderFloors = function (floorsArray, roomsArray) {
   for (var i = 0; i < floorsArray.length; i++) {
     var floor = templateFloor.content.cloneNode(true);
     var floorNumber = floor.querySelector(".floor__number");
     var floorBody = floor.querySelector(".floor__body");
     floorNumber.innerHTML = floorsArray[i] + " этаж";
     for (var j = 0; j < rooms.length; j++) {
-      if (rooms[j].floor === floors[i]) {
-        floorBody.appendChild(renderRoom(rooms[j]));
+      if (roomsArray[j].floor === floorsArray[i]) {
+        floorBody.appendChild(renderRoom(roomsArray[j]));
       };
     };
     diagram.appendChild(floor);
   };
   roomTitles = mainPage.querySelectorAll(".floor__room-title");
 };
+
 
 // Появление плавающего тултипа с названием переговорки
 
@@ -204,7 +275,7 @@ var roomOnScroll = function (items) {
   };
 };
 
-loadRooms ();
+loadEvents();
 
 
 //Генерация списка всех пользователей в форме
@@ -451,12 +522,6 @@ var tooltipOnClick = function (item) {
       eventEdit ();
     };
   });
-};
-
-for (var i = 0; i < events.length; i++) {
-  var eventLeft = events[i].offsetWidth / 2 - eventTooltips[i].offsetWidth / 2;
-  eventTooltips[i].style.marginLeft = eventLeft + "px";
-  tooltipOnClick (events[i]);
 };
 
 

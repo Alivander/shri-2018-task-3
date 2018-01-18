@@ -123,6 +123,7 @@
 }
 
 .floor__event {
+  position: relative;
   flex-shrink: 0;
   min-width: 10px;
   height: 100%;
@@ -150,7 +151,13 @@
 
 .floor__tooltip {
   position: absolute;
+  left: 50%;
+  margin-left: -180px;
   transform: scale(0);
+
+  @media (min-width: $large-screen) {
+    margin-left: -169px;
+  }
 }
 
 .floor__off-time {
