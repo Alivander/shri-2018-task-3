@@ -97,304 +97,21 @@ var eventClose = function () {
 eventPage.style.display = "none";
 
 
-// Запрос данных о встречах
-
-var loadEvents = function () {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "/graphql?query={events{id, title, dateStart, dateEnd, users {id, login, avatarUrl, homeFloor}, room {id, title, capacity, floor}}}");
-  xhr.send();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState != 4) return;
-    if (xhr.status != 200) {
-      console.log(xhr.status + ": " + xhr.statusText);
-      return;
-    } else {
-      try {
-        events = (JSON.parse(xhr.responseText)).data.events;
-      } catch (e) {
-        alert( "Некорректный ответ " + e.message );
-      };
-      loadRooms();
-    };
-  };
-};
-
-
-// Запрос данных о переговорках
-
-var loadRooms = function () {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "/graphql?query={rooms{id, title, capacity, floor}}");
-  xhr.send();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState != 4) return;
-    if (xhr.status != 200) {
-      console.log(xhr.status + ": " + xhr.statusText);
-      return;
-    } else {
-      try {
-        rooms = (JSON.parse(xhr.responseText)).data.rooms;
-      } catch (e) {
-        alert( "Некорректный ответ " + e.message );
-      };
-      renderFloors(selectitionFloors(rooms), rooms);
-      window.addEventListener("scroll", function () {
-        roomOnScroll(roomTitles);
-      });
-    };
-  };
-};
-
-
-// Отрисовка встреч
-
-var events;
-var templateEvent = document.querySelector(".template__event-slot");
-
-var renderEvents = function (room, eventRow, eventsArray) {
-  var fragmentRoom = document.createDocumentFragment();
-  for (var i = 0; i < eventsArray.length; i++) {
-    if (room.id === eventsArray[i].room.id) {
-      var eventSlot = templateEvent.content.cloneNode(true);
-      var eventTooltip = eventSlot.querySelector(".tooltip");
-      eventTooltip.setAttribute("data-id", eventsArray[i].id);
-      var eventTitle = eventSlot.querySelector(".tooltip__title");
-      eventTitle.innerHTML = eventsArray[i].title;
-      var eventInfo = eventSlot.querySelector(".tooltip__info");
-      var eventStart = new Date (Date.parse(eventsArray[i].dateStart));
-      var optionsStart = {
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      };
-      var eventEnd = new Date (Date.parse(eventsArray[i].dateEnd));
-      var optionsEnd = {
-        hour: 'numeric',
-        minute: 'numeric',
-      };
-      eventInfo.innerHTML = eventStart.toLocaleString("ru", optionsStart) + "—" + eventEnd.toLocaleString("ru", optionsEnd) + " · " + room.title;
-      var avatar = eventSlot.querySelector(".user__avatar");
-      var login = eventSlot.querySelector(".user__login");
-      avatar.setAttribute("alt", eventsArray[i].users[1].login);
-      login.innerHTML = eventsArray[i].users[1].login;
-      if (eventsArray[i].users[1].avatarUrl != null) {
-        avatar.setAttribute("src", eventsArray[i].users[1].avatarUrl);
-      } else {
-        avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
-      };
-      var cauntMembers = eventSlot.querySelector(".tooltip__caunt-users");
-      cauntMembers.innerHTML = " и еще" + (eventsArray[i].users.length - 1) + " человек";
-      tooltipOnClick (eventTooltip.parentNode);
-      fragmentRoom.appendChild(eventSlot);
-    };
-  };
-  eventRow.appendChild(fragmentRoom);
-};
-
-
-// Отрисовка переговорок
-
-var templateRoom = document.querySelector(".template__room");
-
-var renderRoom = function (room) {
-  var rowRoom = templateRoom.content.cloneNode(true);
-  var roomTitle = rowRoom.querySelector(".floor__room-title");
-  var roomCapacity = rowRoom.querySelector(".floor__room-capacity");
-  var roomEvents = rowRoom.querySelector(".floor__events");
-  roomTitle.innerHTML = room.title;
-  roomCapacity.innerHTML = "до " + room.capacity + " человек";
-  renderEvents(room, roomEvents, events);
-  return rowRoom;
-};
-
-
-// Выборка этажей
-
-var rooms = [];
-
-var floors = [];
-
-var selectitionFloors = function (rooms) {
-  var numberFloors = [];
-  for (var i = 0; i < rooms.length; i++) {
-    numberFloors[i] = rooms[i].floor;
-  };
-  for (var i = 0; i < numberFloors.length; i++) {
-    if (numberFloors[i] != null) {
-      floors.push(numberFloors[i]);
-    };
-    for (var j = i + 1; j < numberFloors.length; j++) {
-      if (numberFloors[j] === numberFloors[i]) {
-        numberFloors[j] = null;
-      };
-    };
-  };
-  return floors.sort();
-};
-
-
-// Отрисовка этажей
-
-var templateFloor = document.querySelector(".template__floor-table");
-
-var roomTitles = [];
-
-var renderFloors = function (floorsArray, roomsArray) {
-  for (var i = 0; i < floorsArray.length; i++) {
-    var floor = templateFloor.content.cloneNode(true);
-    var floorNumber = floor.querySelector(".floor__number");
-    var floorBody = floor.querySelector(".floor__body");
-    floorNumber.innerHTML = floorsArray[i] + " этаж";
-    for (var j = 0; j < rooms.length; j++) {
-      if (roomsArray[j].floor === floorsArray[i]) {
-        floorBody.appendChild(renderRoom(roomsArray[j]));
-      };
-    };
-    diagram.appendChild(floor);
-  };
-  roomTitles = mainPage.querySelectorAll(".floor__room-title");
-};
-
-
-// Появление плавающего тултипа с названием переговорки
-
-var roomOnScroll = function (items) {
-  var room = mainPage.querySelector(".floor__room");
-  if (window.pageXOffset > room.offsetWidth) {
-    for (var i = 0; i < items.length; i++) {
-      items[i].classList.add("floor__room-title--tooltip");
-      items[i].style.left = window.pageXOffset + 12 + "px";
-    };
-  } else {
-    for (var j = 0; j < rooms.length; j++) {
-      if (items[j].classList.contains("floor__room-title--tooltip")) {
-        items[j].classList.remove("floor__room-title--tooltip");
-      };
-    };
-  };
-};
-
-loadEvents();
-
-
-//Генерация списка всех пользователей в форме
-
-var loadUsers = function () {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "/graphql?query={users{id, login, avatarUrl, homeFloor}}");
-  xhr.send();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState != 4) return;
-    if (xhr.status != 200) {
-      console.log(xhr.status + ": " + xhr.statusText);
-      return;
-    } else {
-      try {
-        users = (JSON.parse(xhr.responseText)).data.users;
-      } catch (e) {
-        alert( "Некорректный ответ " + e.message );
-      };
-      createEventCandidatesList ();
-    };
-  };
-};
-
-var templateEventCandidate = document.querySelector(".template__candidate");
-var templateEventUser = eventUsersList.querySelector(".template__event-users");
-
-var users;
-
-var createEventCandidatesList = function () {
-  for (var i = 0; i < users.length; i++) {
-    var candidate = templateEventCandidate.content.cloneNode(true);
-    var field = candidate.querySelector(".field__option");
-    var avatar = candidate.querySelector(".user__avatar");
-    var login = candidate.querySelector(".user__login");
-    var homeFloor = candidate.querySelector(".user__home-floor");
-    field.setAttribute("data-id", users[i].id);
-    field.setAttribute("data-index", i);
-    avatar.setAttribute("alt", users[i].login);
-    login.innerHTML = users[i].login;
-    homeFloor.innerHTML = users[i].homeFloor + " этаж";
-    if (users[i].avatarUrl != null) {
-      avatar.setAttribute("src", users[i].avatarUrl);
-    } else {
-      avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
-    };
-    eventCandidatesList.appendChild(candidate);
-  };
-};
-
-loadUsers ();
-
-
-// Выбор участников встречи
-
-var templateEventMembers = document.querySelector(".template__event-users").content;
-
-var selectEventCandidate = function (index) {
-  var member = templateEventMembers.cloneNode(true);
-  var user = member.querySelector(".event__user");
-  user.setAttribute("data-id", users[index].id);
-  user.setAttribute("data-index", index);
-  var input = member.querySelector("input");
-  input.setAttribute("name", users[index].id);
-  var avatar = member.querySelector(".user__avatar");
-  if (users[index].avatarUrl != null) {
-    avatar.setAttribute("src", users[index].avatarUrl);
-  } else {
-    avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
-  };
-  var login = member.querySelector(".user__login");
-  login.innerHTML = users[index].login;
-  eventUsersList.appendChild(member);
-};
-
-eventCandidatesList.addEventListener("click", function (evt) {
-  evt.preventDefault();
-  var target = evt.target;
-  while (!target.classList.contains("event__candidates")) {
-    if (target.classList.contains("field__option")) {
-      selectEventCandidate (target.getAttribute("data-index"));
-      target.style.display = "none";
-      return;
-    };
-    target = target.parentNode;
-  };
-});
-
-
-// Удаление участников встречи
-
-eventUsersList.addEventListener("click", function (evt) {
-  evt.preventDefault();
-  var target = event.target;
-  while (!target.classList.contains("event__users")) {
-    if (target.classList.contains("event__user")) {
-      eventUsersList.removeChild(target);
-      var index = "[data-id=\"" + target.getAttribute("data-id") + "\"]";
-      var candidate = eventCandidatesList.querySelector(index);
-      candidate.removeAttribute("style");
-      return;
-    };
-    target = target.parentNode;
-  };
-});
-
-
 // Отображение текущего времени
 
 var timeOutput = function () {
+
   var now = new Date ();
   var hour = now.getHours();
   var minute = now.getMinutes()
   var minuteInDay = hour * 60 + minute;
+
   if (minute < 10) {
     timeNow.innerHTML = hour + ":0" + minute;
   } else {
     timeNow.innerHTML = hour + ":" + minute;
   };
+
   if (minuteInDay >= 450 && minuteInDay <= 1410) {
     timeNow.style.left = (minuteInDay - 450) * 1.1 + 180 + "px";
     timeLine.style.left = (minuteInDay - 450) * 1.1 + 180 + "px";
@@ -427,6 +144,338 @@ dateCurrentText = dateCurrentText.slice(0, dateCurrentText.length-1);
 dateActive.innerHTML = dateCurrentText + " · Сегодня";
 
 
+// Запрос данных о встречах
+
+var loadEvents = function () {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "/graphql?query={events{id, title, dateStart, dateEnd, users {id, login, avatarUrl, homeFloor}, room {id, title, capacity, floor}}}");
+  xhr.send();
+  xhr.onreadystatechange = function() {
+
+    if (xhr.readyState != 4) return;
+
+    if (xhr.status != 200) {
+      console.log(xhr.status + ": " + xhr.statusText);
+      return;
+    } else {
+      try {
+        events = (JSON.parse(xhr.responseText)).data.events;
+      } catch (e) {
+        alert( "Некорректный ответ " + e.message );
+      };
+      loadRooms();
+    };
+
+  };
+};
+
+
+// Запрос данных о переговорках
+
+var loadRooms = function () {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "/graphql?query={rooms{id, title, capacity, floor}}");
+  xhr.send();
+  xhr.onreadystatechange = function() {
+
+    if (xhr.readyState != 4) return;
+
+    if (xhr.status != 200) {
+      console.log(xhr.status + ": " + xhr.statusText);
+      return;
+    } else {
+      try {
+        rooms = (JSON.parse(xhr.responseText)).data.rooms;
+      } catch (e) {
+        alert( "Некорректный ответ " + e.message );
+      };
+      renderFloors(selectitionFloors(rooms), rooms);
+      window.addEventListener("scroll", function () {
+        roomOnScroll(roomTitles);
+      });
+    };
+
+  };
+};
+
+
+// Отрисовка встреч
+
+var events;
+var templateEvent = document.querySelector(".template__event-slot");
+
+var renderEvents = function (room, eventRow, eventsArray) {
+
+  var fragmentRoom = document.createDocumentFragment();
+
+  for (var i = 0; i < eventsArray.length; i++) {
+
+    if (room.id === eventsArray[i].room.id) {
+
+      var eventSlot = templateEvent.content.cloneNode(true);
+      var eventTooltip = eventSlot.querySelector(".tooltip");
+      var eventTitle = eventSlot.querySelector(".tooltip__title");
+      var eventInfo = eventSlot.querySelector(".tooltip__info");
+      var eventStart = new Date (Date.parse(eventsArray[i].dateStart));
+      var optionsStart = {
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      };
+      var eventEnd = new Date (Date.parse(eventsArray[i].dateEnd));
+      var optionsEnd = {
+        hour: 'numeric',
+        minute: 'numeric',
+      };
+      var avatar = eventSlot.querySelector(".user__avatar");
+      var login = eventSlot.querySelector(".user__login");
+      var cauntMembers = eventSlot.querySelector(".tooltip__caunt-users");
+
+      eventTooltip.setAttribute("data-id", eventsArray[i].id);
+      eventTitle.innerHTML = eventsArray[i].title;
+      eventInfo.innerHTML = eventStart.toLocaleString("ru", optionsStart) + "—" + eventEnd.toLocaleString("ru", optionsEnd) + " · " + room.title;
+      avatar.setAttribute("alt", eventsArray[i].users[1].login);
+      login.innerHTML = eventsArray[i].users[1].login;
+
+      if (eventsArray[i].users[1].avatarUrl != null) {
+        avatar.setAttribute("src", eventsArray[i].users[1].avatarUrl);
+      } else {
+        avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
+      };
+
+      cauntMembers.innerHTML = " и еще" + (eventsArray[i].users.length - 1) + " человек";
+      tooltipOnClick (eventTooltip.parentNode);
+      fragmentRoom.appendChild(eventSlot);
+    };
+
+  };
+
+  eventRow.appendChild(fragmentRoom);
+
+};
+
+
+// Отрисовка переговорок
+
+var templateRoom = document.querySelector(".template__room");
+
+var renderRoom = function (room) {
+  var rowRoom = templateRoom.content.cloneNode(true);
+  var roomTitle = rowRoom.querySelector(".floor__room-title");
+  var roomCapacity = rowRoom.querySelector(".floor__room-capacity");
+  var roomEvents = rowRoom.querySelector(".floor__events");
+
+  roomTitle.innerHTML = room.title;
+  roomCapacity.innerHTML = "до " + room.capacity + " человек";
+  renderEvents(room, roomEvents, events);
+  return rowRoom;
+};
+
+
+// Выборка этажей
+
+var rooms = [];
+
+var floors = [];
+
+var selectitionFloors = function (rooms) {
+
+  var numberFloors = [];
+
+  for (var i = 0; i < rooms.length; i++) {
+    numberFloors[i] = rooms[i].floor;
+  };
+
+  for (var i = 0; i < numberFloors.length; i++) {
+    if (numberFloors[i] != null) {
+      floors.push(numberFloors[i]);
+    };
+    for (var j = i + 1; j < numberFloors.length; j++) {
+      if (numberFloors[j] === numberFloors[i]) {
+        numberFloors[j] = null;
+      };
+    };
+  };
+
+  return floors.sort();
+};
+
+
+// Отрисовка этажей
+
+var templateFloor = document.querySelector(".template__floor-table");
+
+var roomTitles = [];
+
+var renderFloors = function (floorsArray, roomsArray) {
+
+  for (var i = 0; i < floorsArray.length; i++) {
+    var floor = templateFloor.content.cloneNode(true);
+    var floorNumber = floor.querySelector(".floor__number");
+    var floorBody = floor.querySelector(".floor__body");
+
+    floorNumber.innerHTML = floorsArray[i] + " этаж";
+    for (var j = 0; j < rooms.length; j++) {
+      if (roomsArray[j].floor === floorsArray[i]) {
+        floorBody.appendChild(renderRoom(roomsArray[j]));
+      };
+    };
+    diagram.appendChild(floor);
+  };
+  roomTitles = mainPage.querySelectorAll(".floor__room-title");
+};
+
+
+// Появление плавающего тултипа с названием переговорки
+
+var roomOnScroll = function (items) {
+
+  var room = mainPage.querySelector(".floor__room");
+
+  if (window.pageXOffset > room.offsetWidth) {
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.add("floor__room-title--tooltip");
+      items[i].style.left = window.pageXOffset + 12 + "px";
+    };
+  } else {
+    for (var j = 0; j < rooms.length; j++) {
+      if (items[j].classList.contains("floor__room-title--tooltip")) {
+        items[j].classList.remove("floor__room-title--tooltip");
+      };
+    };
+  };
+};
+
+loadEvents();
+
+
+//Генерация списка всех пользователей в форме
+
+var loadUsers = function () {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "/graphql?query={users{id, login, avatarUrl, homeFloor}}");
+  xhr.send();
+  xhr.onreadystatechange = function() {
+
+    if (xhr.readyState != 4) return;
+
+    if (xhr.status != 200) {
+      console.log(xhr.status + ": " + xhr.statusText);
+      return;
+    } else {
+      try {
+        users = (JSON.parse(xhr.responseText)).data.users;
+      } catch (e) {
+        alert( "Некорректный ответ " + e.message );
+      };
+      createEventCandidatesList ();
+    };
+  };
+};
+
+var templateEventCandidate = document.querySelector(".template__candidate");
+var templateEventUser = eventUsersList.querySelector(".template__event-users");
+
+var users;
+
+var createEventCandidatesList = function () {
+
+  for (var i = 0; i < users.length; i++) {
+
+    var candidate = templateEventCandidate.content.cloneNode(true);
+    var field = candidate.querySelector(".field__option");
+    var avatar = candidate.querySelector(".user__avatar");
+    var login = candidate.querySelector(".user__login");
+    var homeFloor = candidate.querySelector(".user__home-floor");
+
+    field.setAttribute("data-id", users[i].id);
+    field.setAttribute("data-index", i);
+    avatar.setAttribute("alt", users[i].login);
+    login.innerHTML = users[i].login;
+    homeFloor.innerHTML = users[i].homeFloor + " этаж";
+
+    if (users[i].avatarUrl != null) {
+      avatar.setAttribute("src", users[i].avatarUrl);
+    } else {
+      avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
+    };
+
+    eventCandidatesList.appendChild(candidate);
+  };
+
+};
+
+loadUsers ();
+
+
+// Выбор участников встречи
+
+var templateEventMembers = document.querySelector(".template__event-users").content;
+
+var selectEventCandidate = function (index) {
+
+  var member = templateEventMembers.cloneNode(true);
+  var user = member.querySelector(".event__user");
+  var input = member.querySelector("input");
+  var avatar = member.querySelector(".user__avatar");
+  var login = member.querySelector(".user__login");
+
+  user.setAttribute("data-id", users[index].id);
+  user.setAttribute("data-index", index);
+  input.setAttribute("name", users[index].id);
+
+  if (users[index].avatarUrl != null) {
+    avatar.setAttribute("src", users[index].avatarUrl);
+  } else {
+    avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
+  };
+
+  login.innerHTML = users[index].login;
+  eventUsersList.appendChild(member);
+};
+
+eventCandidatesList.addEventListener("click", function (evt) {
+
+  evt.preventDefault();
+
+  var target = evt.target;
+
+  while (!target.classList.contains("event__candidates")) {
+    if (target.classList.contains("field__option")) {
+      selectEventCandidate (target.getAttribute("data-index"));
+      target.style.display = "none";
+      return;
+    };
+    target = target.parentNode;
+  };
+});
+
+
+// Удаление участников встречи
+
+eventUsersList.addEventListener("click", function (evt) {
+
+  evt.preventDefault();
+
+  var target = event.target;
+
+  while (!target.classList.contains("event__users")) {
+    if (target.classList.contains("event__user")) {
+      eventUsersList.removeChild(target);
+      var index = "[data-id=\"" + target.getAttribute("data-id") + "\"]";
+      var candidate = eventCandidatesList.querySelector(index);
+      candidate.removeAttribute("style");
+      return;
+    };
+    target = target.parentNode;
+  };
+});
+
+
 // Открытие и закрытите календаря на главной странице
 
 dateActive.addEventListener("click", function () {
@@ -438,7 +487,7 @@ dateCalendar.addEventListener("click", function (evt) {
     setTimeout(function () {
       dateCalendar.classList.remove("date__calendar--shown");
     }, 350);
-  }
+  };
 });
 
 
@@ -494,8 +543,10 @@ var eventOpeninRoom = function (item) {
   item.addEventListener("click", function (evt) {
     if (evt.target.classList.contains("floor__plus")) {
       evt.preventDefault();
+
       var titleCurrentRoom = item.querySelector(".floor__room-title");
       var inputText = dateCurrent.toLocaleString("ru", optionsForDateInEvent);
+
       inputEventDate.value = inputText.slice(0, inputText.length - 8) + ", " + inputText.slice(inputText.length - 7, inputText.length - 3);
       eventOpen ();
     };
@@ -514,9 +565,9 @@ var tooltipOnClick = function (item) {
     evt.preventDefault ();
     item.classList.toggle("floor__event--active");
     setTimeout (function () {
-    if (item.classList.contains("floor__event--active")) {
-      item.classList.remove("floor__event--active");
-    }
+      if (item.classList.contains("floor__event--active")) {
+        item.classList.remove("floor__event--active");
+      };
     }, 30000);
     if (evt.target.classList.contains("tooltip__edit")) {
       eventEdit ();
@@ -533,17 +584,20 @@ inputEventCandidate.addEventListener("focus", function () {
 });
 
 inputEventCandidate.addEventListener("blur", function () {
+
   if (eventCandidatesList.classList.contains("event__candidates--shown")) {
     setTimeout (function () {
       eventCandidatesList.classList.remove("event__candidates--shown");
       buttonOpenCandidates.style.display = "none";
     }, 250);
   };
+
   if (inputEventCandidate.value) {
     buttonResetInputCandidate.removeAttribute('style');
   } else {
     buttonResetInputCandidate.style.display = "none";
   };
+
 });
 
 buttonOpenCandidates.addEventListener("click", function () {
@@ -569,23 +623,29 @@ inputEventName.addEventListener("input", function () {
 var variantOnClick = function (item) {
   item.addEventListener("click", function (evt) {
     evt.preventDefault ();
+
     var input = item.querySelector("input");
+
     if (!input.checked) {
       eventRecommendation.dataset.heading = "Ваша переговорка";
       input.checked = true;
       item.classList.add("event__variant--active");
+
       for (var i = 0; i < eventVariants.length; i++) {
         if (!eventVariants[i].classList.contains("event__variant--active")) {
           eventVariants[i].style.display = "none";
         };
       };
+
     } else {
       eventRecommendation.dataset.heading = "Рекомендованные переговорки";
       input.checked = false;
+
       for (var i = 0; i < eventVariants.length; i++) {
         eventVariants[i].removeAttribute('style');
         eventVariants[i].classList.remove("event__variant--active");
       };
+
     };
   });
 };
