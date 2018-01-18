@@ -206,14 +206,13 @@ var loadRooms = function () {
 
 var events;
 var templateEvent = document.querySelector(".template__event-slot");
+var templateOffTime = document.querySelector(".template__off-time-slot");
 
 var sortAnEvents = function (eventsArray) {
-  console.log(eventsArray);
   for (var i = 0; i < eventsArray.length - 1; i++) {
     var before = Date.parse(eventsArray[i].dateStart);
     for (var j = i + 1 ; j < eventsArray.length; j++) {
       var current = Date.parse(eventsArray[j].dateStart);
-      console.log(before, current);
       if (current < before) {
         before = current;
         var swap = eventsArray[i];
@@ -222,12 +221,15 @@ var sortAnEvents = function (eventsArray) {
       };
     };
   };
-  console.log(eventsArray);
 };
 
 var renderEvents = function (room, eventRow, eventsArray) {
 
   var fragmentRoom = document.createDocumentFragment();
+  var timePoints = [];
+  var startOfDay = Date.parse((eventsArray[1].dateStart).slice(0, 11) + "03:30:00.000Z");
+  var endOfDay = Date.parse((eventsArray[1].dateEnd).slice(0, 11) + "19:30:00.000Z");
+  var timeSwap = startOfDay;
 
   for (var i = 0; i < eventsArray.length; i++) {
 
@@ -270,9 +272,31 @@ var renderEvents = function (room, eventRow, eventsArray) {
 
       cauntMembers.innerHTML = " и еще" + (eventsArray[i].users.length - 1) + " человек";
       tooltipOnClick (eventTooltip.parentNode);
-      fragmentRoom.appendChild(eventSlot);
+
+      if (Date.parse(eventsArray[i].dateStart) > timeSwap) {
+        var slotOffTime = templateOffTime.content.cloneNode(true);
+        var slotOffTimeInner = slotOffTime.querySelector(".floor__off-time");
+        slotOffTimeInner.setAttribute("data-start", timeSwap);
+        slotOffTimeInner.setAttribute("data-end", Date.parse(eventsArray[i].dateStart));
+        slotOffTimeInner.style.width = (Date.parse(eventsArray[i].dateStart) - timeSwap) / 60000 * 1.1 + "px";
+        fragmentRoom.appendChild(slotOffTime);
+        fragmentRoom.appendChild(eventSlot);
+        timeSwap = Date.parse(eventsArray[i].dateEnd);
+      } else {
+        fragmentRoom.appendChild(eventSlot);
+        timeSwap = Date.parse(eventsArray[i].dateEnd);
+      };
     };
 
+  };
+
+  if (timeSwap < endOfDay) {
+    var slotOffTime = templateOffTime.content.cloneNode(true);
+    var slotOffTimeInner = slotOffTime.querySelector(".floor__off-time");
+    slotOffTimeInner.setAttribute("data-start", timeSwap);
+    slotOffTimeInner.setAttribute("data-end", endOfDay);
+    slotOffTimeInner.style.width = (endOfDay - timeSwap) / 60000 * 1.1 + "px";
+    fragmentRoom.appendChild(slotOffTime);
   };
 
   eventRow.appendChild(fragmentRoom);
