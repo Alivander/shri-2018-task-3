@@ -279,6 +279,7 @@ var renderEvents = function (room, eventRow, eventsArray) {
         slotOffTimeInner.setAttribute("data-start", timeSwap);
         slotOffTimeInner.setAttribute("data-end", Date.parse(eventsArray[i].dateStart));
         slotOffTimeInner.style.width = (Date.parse(eventsArray[i].dateStart) - timeSwap) / 60000 * 1.1 + "px";
+        eventOpeninRoom (slotOffTimeInner);
         fragmentRoom.appendChild(slotOffTime);
         fragmentRoom.appendChild(eventSlot);
         timeSwap = Date.parse(eventsArray[i].dateEnd);
@@ -296,6 +297,7 @@ var renderEvents = function (room, eventRow, eventsArray) {
     slotOffTimeInner.setAttribute("data-start", timeSwap);
     slotOffTimeInner.setAttribute("data-end", endOfDay);
     slotOffTimeInner.style.width = (endOfDay - timeSwap) / 60000 * 1.1 + "px";
+    eventOpeninRoom (slotOffTimeInner);
     fragmentRoom.appendChild(slotOffTime);
   };
 
@@ -592,15 +594,15 @@ var eventOpeninRoom = function (item) {
 
       var titleCurrentRoom = item.querySelector(".floor__room-title");
       var inputText = dateCurrent.toLocaleString("ru", optionsForDateInEvent);
+      var eventStart = new Date (evt.target.parentNode.getAttribute("data-start"));
+      var eventEnd = new Date (evt.target.parentNode.getAttribute("data-end"));
 
       inputEventDate.value = inputText.slice(0, inputText.length - 8) + ", " + inputText.slice(inputText.length - 7, inputText.length - 3);
+      inputEventStart.value = eventStart.getHours() + ":" + eventStart.getMinutes();
+      inputEventEnd.value = eventEnd.getHours() + ":" + eventEnd.getMinutes();
       eventOpen ();
     };
   });
-};
-
-for (var i = 0; i < rowsWithRooms.length; i++) {
-  eventOpeninRoom (rowsWithRooms[i]);
 };
 
 
