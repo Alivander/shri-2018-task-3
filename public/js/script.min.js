@@ -603,6 +603,7 @@ var eventOpeninRoom = function (item) {
       inputEventDate.value = inputText.slice(0, inputText.length - 8) + ", " + inputText.slice(inputText.length - 7, inputText.length - 3);
       inputEventStart.value = eventStart.getHours() + ":" + eventStart.getMinutes();
       inputEventEnd.value = eventEnd.getHours() + ":" + eventEnd.getMinutes();
+      eventRecommendation.innerHTML = "Подбор переговорок...";
       eventOpen ();
     };
   });
