@@ -270,7 +270,12 @@ var renderEvents = function (room, eventRow, eventsArray) {
         avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
       };
 
-      cauntMembers.innerHTML = " и еще" + (eventsArray[i].users.length - 1) + " человек";
+      if (eventsArray[i].users.length === 2 || eventsArray[i].users.length === 3 || eventsArray[i].users.length === 4) {
+        cauntMembers.innerHTML = " и еще " + (eventsArray[i].users.length - 1) + " человека";
+      } else {
+        cauntMembers.innerHTML = " и еще " + (eventsArray[i].users.length - 1) + " человек";
+      };
+
       tooltipOnClick (eventTooltip.parentNode);
 
       if (Date.parse(eventsArray[i].dateStart) > timeSwap) {
