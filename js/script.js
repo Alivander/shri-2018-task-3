@@ -289,6 +289,7 @@ var renderEvents = function (room, eventRow, eventsArray) {
         var slotOffTime = templateOffTime.content.cloneNode(true);
         var slotOffTimeInner = slotOffTime.querySelector(".floor__off-time");
         slotOffTimeInner.setAttribute("data-start", timeSwap);
+        slotOffTimeInner.setAttribute("data-room", room.id);
         slotOffTimeInner.setAttribute("data-end", Date.parse(eventsArray[i].dateStart));
         slotOffTimeInner.style.width = (Date.parse(eventsArray[i].dateStart) - timeSwap) / 60000 * 1.1 + "px";
         eventOpeninRoom (slotOffTimeInner);
@@ -306,6 +307,7 @@ var renderEvents = function (room, eventRow, eventsArray) {
   if (timeSwap < endOfDay) {
     var slotOffTime = templateOffTime.content.cloneNode(true);
     var slotOffTimeInner = slotOffTime.querySelector(".floor__off-time");
+    slotOffTimeInner.setAttribute("data-room", room.id);
     slotOffTimeInner.setAttribute("data-start", timeSwap);
     slotOffTimeInner.setAttribute("data-end", endOfDay);
     slotOffTimeInner.style.width = (endOfDay - timeSwap) / 60000 * 1.1 + "px";
@@ -599,11 +601,19 @@ var eventOpeninRoom = function (item) {
       var inputText = dateCurrent.toLocaleString("ru", optionsForDateInEvent);
       var eventStart = new Date (parseInt ((evt.target.parentNode.getAttribute("data-start"))));
       var eventEnd = new Date (parseInt (evt.target.parentNode.getAttribute("data-end")));
+      var index;
 
       inputEventDate.value = inputText.slice(0, inputText.length - 8) + ", " + inputText.slice(inputText.length - 7, inputText.length - 3);
       inputEventStart.value = eventStart.getHours() + ":" + eventStart.getMinutes();
       inputEventEnd.value = eventEnd.getHours() + ":" + eventEnd.getMinutes();
-      eventRecommendation.innerHTML = "Подбор переговорок...";
+
+      for (var i = 0; i < rooms.length; i++) {
+        if (item.getAttribute("data-room") === rooms[i].id) {
+          index = i;
+        };
+      };
+
+      renderRecommenderRoom(events[index].room, parseInt ((evt.target.parentNode.getAttribute("data-start"))), parseInt (evt.target.parentNode.getAttribute("data-end")), true);
       eventOpen ();
     };
   });
