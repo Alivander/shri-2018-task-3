@@ -119,8 +119,8 @@ var timeOutput = function () {
     timeNow.style.left = "180px";
     timeLine.style.left = "180px";
   } else {
-    timeNow.style.left = "100%";
-    timeLine.style.left = "100%";
+    timeNow.style.left = "1236px";
+    timeLine.style.left = "1236px";
   };
 };
 
