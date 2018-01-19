@@ -49,6 +49,15 @@ var buttonModalOk = modal.querySelector(".modal__ok");
 var buttonModalCancel = modal.querySelector(".modal__candel");
 var buttonModalRemove = modal.querySelector(".modal__remove");
 
+var templateEventCandidate = document.querySelector(".template__candidate");
+var templateEventUser = eventUsersList.querySelector(".template__event-users");
+var templateEvent = document.querySelector(".template__event-slot");
+var templateOffTime = document.querySelector(".template__off-time-slot");;
+var templateRoom = document.querySelector(".template__room");
+var templateFloor = document.querySelector(".template__floor-table");
+var templateEventMembers = document.querySelector(".template__event-users");
+var templateRecommendedRoom = document.querySelector(".template__recommended-room");
+
 
 var onClick = function (item, func) {
   item.addEventListener("click", function (evt) {
@@ -205,8 +214,6 @@ var loadRooms = function () {
 // Отрисовка встреч
 
 var events;
-var templateEvent = document.querySelector(".template__event-slot");
-var templateOffTime = document.querySelector(".template__off-time-slot");
 
 var sortAnEvents = function (eventsArray) {
   for (var i = 0; i < eventsArray.length - 1; i++) {
@@ -313,8 +320,6 @@ var renderEvents = function (room, eventRow, eventsArray) {
 
 // Отрисовка переговорок
 
-var templateRoom = document.querySelector(".template__room");
-
 var renderRoom = function (room) {
   var rowRoom = templateRoom.content.cloneNode(true);
   var roomTitle = rowRoom.querySelector(".floor__room-title");
@@ -358,8 +363,6 @@ var selectitionFloors = function (rooms) {
 
 
 // Отрисовка этажей
-
-var templateFloor = document.querySelector(".template__floor-table");
 
 var roomTitles = [];
 
@@ -430,9 +433,6 @@ var loadUsers = function () {
   };
 };
 
-var templateEventCandidate = document.querySelector(".template__candidate");
-var templateEventUser = eventUsersList.querySelector(".template__event-users");
-
 var users;
 
 var createEventCandidatesList = function () {
@@ -467,11 +467,9 @@ loadUsers ();
 
 // Выбор участников встречи
 
-var templateEventMembers = document.querySelector(".template__event-users").content;
-
 var selectEventCandidate = function (index) {
 
-  var member = templateEventMembers.cloneNode(true);
+  var member = templateEventMembers.content.cloneNode(true);
   var user = member.querySelector(".event__user");
   var input = member.querySelector("input");
   var avatar = member.querySelector(".user__avatar");
@@ -617,14 +615,35 @@ var tooltipOnClick = function (item) {
   item.addEventListener("click", function (evt) {
     evt.preventDefault ();
     item.classList.toggle("floor__event--active");
+
     setTimeout (function () {
       if (item.classList.contains("floor__event--active")) {
         item.classList.remove("floor__event--active");
       };
     }, 30000);
+
     if (evt.target.classList.contains("tooltip__edit")) {
+      var index = evt.target.parentNode.getAttribute("data-index");
+      var eventStart = new Date (Date.parse (events[index].dateStart));
+      var eventEnd = new Date (Date.parse (events[index].dateEnd));
+
+      inputEventName.value = events[index].title;
+      inputEventStart.value = eventStart.getHours() + ":" + eventStart.getMinutes();
+      inputEventEnd.value = eventEnd.getHours() + ":" + eventEnd.getMinutes();
+
+      for (var i = 0; i < events[index].users.length; i++) {
+        var candidate = eventCandidatesList.querySelector("[data-id=\"" + events[index].users[i].id + "\"]");
+        if (candidate) {
+          candidate.style.display = "none";
+          selectEventCandidate (candidate.getAttribute("data-index"));
+        };
+      };
+
+      renderRecommenderRoom(events[index].room, Date.parse(events[index].dateStart), Date.parse(events[index].dateEnd), true);
+
       eventEdit ();
     };
+
   });
 };
 
@@ -669,6 +688,30 @@ inputEventName.addEventListener("input", function () {
     buttonResetEventName.style.display = "none";
   };
 });
+
+
+// Отрисовка переговорки
+
+var renderRecommenderRoom = function (roomEvent, eventStart, eventEnd, check) {
+  var room = templateRecommendedRoom.content.cloneNode(true);
+  var input = room.querySelector(".event__variant-control");
+  var duration = room.querySelector(".event__duration");
+  var start = new Date (eventStart);
+  var end = new Date (eventEnd);
+  var title = room.querySelector(".event__room");
+  var floor = room.querySelector(".event__floor");
+
+  if (check === true) {
+    input.parentNode.classList.add("event__variant--active");
+    input.checked = true;
+  };
+
+  input.setAttribute("value", roomEvent.id);
+  duration.innerHTML = start.getHours() + ":" + start.getMinutes() + "—" + end.getHours() + ":" + end.getMinutes();
+  title.innerHTML = roomEvent.title;
+  floor.innerHTML = roomEvent.floor + " этаж";
+  eventRecommendation.appendChild(room);
+};
 
 
 // Выбор переговорки из предложенных

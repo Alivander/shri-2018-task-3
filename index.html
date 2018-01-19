@@ -826,26 +826,7 @@
 
         </div>
 
-        <div class="event__fieldset event__recommendation" data-heading="Рекомендованные переговорки">
-          <label class="event__variant">
-            <input class="visually-hidden event__variant-control" type="radio" name="event-room" value="recommendation-1">
-            <span class="event__duration">16:00—16:30</span>
-            <span class="event__room">Готем</span>
-            <span class="event__floor">4 этаж</span>
-          </label>
-          <label class="event__variant">
-            <input class="visually-hidden event__variant-control" type="radio" name="event-room" value="recommendation-2">
-            <span class="event__duration">16:00—16:30</span>
-            <span class="event__room">Поле непаханное</span>
-            <span class="event__floor">4 этаж</span>
-          </label>
-          <label class="event__variant">
-            <input class="visually-hidden event__variant-control" type="radio" name="event-room" value="recommendation-3">
-            <span class="event__duration">16:00—16:30</span>
-            <span class="event__room">Тёмная башня</span>
-            <span class="event__floor">4 этаж</span>
-          </label>
-        </div>
+        <div class="event__fieldset event__recommendation" data-heading="Рекомендованные переговорки"></div>
 
       </div>
 
@@ -947,6 +928,15 @@
           </span>
         </label>
       </li>
+    </template>
+
+    <template class="template__recommended-room">
+      <label class="event__variant">
+        <input class="visually-hidden event__variant-control" type="radio" name="event-room" value="">
+        <span class="event__duration"></span>
+        <span class="event__room"></span>
+        <span class="event__floor"></span>
+      </label>
     </template>
 
     <script src="js/script.min.js"></script>
