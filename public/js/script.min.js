@@ -594,8 +594,8 @@ var eventOpeninRoom = function (item) {
 
       var titleCurrentRoom = item.querySelector(".floor__room-title");
       var inputText = dateCurrent.toLocaleString("ru", optionsForDateInEvent);
-      var eventStart = new Date (evt.target.parentNode.getAttribute("data-start"));
-      var eventEnd = new Date (evt.target.parentNode.getAttribute("data-end"));
+      var eventStart = new Date (parseInt ((evt.target.parentNode.getAttribute("data-start"))));
+      var eventEnd = new Date (parseInt (evt.target.parentNode.getAttribute("data-end")));
 
       inputEventDate.value = inputText.slice(0, inputText.length - 8) + ", " + inputText.slice(inputText.length - 7, inputText.length - 3);
       inputEventStart.value = eventStart.getHours() + ":" + eventStart.getMinutes();
