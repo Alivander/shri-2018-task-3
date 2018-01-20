@@ -90,15 +90,16 @@ var eventEdit = function () {
   mainPage.style.display = "none";
   headerButton.style.display = "none";
   modal.style.display = "none";
-}
+};
 
 var eventClose = function () {
   eventPage.style.display = "none";
   mainPage.removeAttribute('style');
   headerButton.removeAttribute('style');
-  eventRecommendation.removeAttribute('style');
+  eventRecommendation.innerHTML = "";
   eventWarning.removeAttribute('style');
-}
+  resetSelectEventCandidates();
+};
 
 
 // При открытии страницы
@@ -153,40 +154,20 @@ dateCurrentText = dateCurrentText.slice(0, dateCurrentText.length-1);
 dateActive.innerHTML = dateCurrentText + " · Сегодня";
 
 
-// Запрос данных о встречах
+// Запрос данных с сервера. В идеале он должен запрашивать данные для конкретной даты, но я пока не знаю как это реализовать
 
-var loadEvents = function () {
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "/graphql?query={events{id, title, dateStart, dateEnd, users {id, login, avatarUrl, homeFloor}, room {id, title, capacity, floor}}}");
-  xhr.send();
-  xhr.onreadystatechange = function() {
-
-    if (xhr.readyState != 4) return;
-
-    if (xhr.status != 200) {
-      console.log(xhr.status + ": " + xhr.statusText);
-      return;
-    } else {
-      try {
-        events = (JSON.parse(xhr.responseText)).data.events;
-      } catch (e) {
-        alert( "Некорректный ответ " + e.message );
-      };
-      sortAnEvents(events);
-      loadRooms();
-    };
-
-  };
+var db = {
+  events: [],
+  rooms: [],
+  users: []
 };
 
-
-// Запрос данных о переговорках
-
-var loadRooms = function () {
+var loadData = function () {
 
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', "/graphql?query={rooms{id, title, capacity, floor}}");
+  xhr.open(
+    'GET',
+    "/graphql?query={events{id, title, dateStart, dateEnd, users {id, login, avatarUrl, homeFloor}, room {id, title, capacity, floor}}, rooms{id, title, capacity, floor}, users{id, login, avatarUrl, homeFloor}}");
   xhr.send();
   xhr.onreadystatechange = function() {
 
@@ -197,14 +178,18 @@ var loadRooms = function () {
       return;
     } else {
       try {
-        rooms = (JSON.parse(xhr.responseText)).data.rooms;
+        db.events = (JSON.parse(xhr.responseText)).data.events;
+        db.rooms = (JSON.parse(xhr.responseText)).data.rooms;
+        db.users = (JSON.parse(xhr.responseText)).data.users;
       } catch (e) {
         alert( "Некорректный ответ " + e.message );
       };
-      renderFloors(selectitionFloors(rooms), rooms);
+      sortAnEvents(db.events);
+      renderFloors(selectitionFloors(db.rooms), db.rooms);
       window.addEventListener("scroll", function () {
         roomOnScroll(roomTitles);
       });
+      createEventCandidatesList ();
     };
 
   };
@@ -212,8 +197,6 @@ var loadRooms = function () {
 
 
 // Отрисовка встреч
-
-var events;
 
 var sortAnEvents = function (eventsArray) {
   for (var i = 0; i < eventsArray.length - 1; i++) {
@@ -330,14 +313,12 @@ var renderRoom = function (room) {
 
   roomTitle.innerHTML = room.title;
   roomCapacity.innerHTML = "до " + room.capacity + " человек";
-  renderEvents(room, roomEvents, events);
+  renderEvents(room, roomEvents, db.events);
   return rowRoom;
 };
 
 
 // Выборка этажей
-
-var rooms = [];
 
 var floors = [];
 
@@ -376,7 +357,7 @@ var renderFloors = function (floorsArray, roomsArray) {
     var floorBody = floor.querySelector(".floor__body");
 
     floorNumber.innerHTML = floorsArray[i] + " этаж";
-    for (var j = 0; j < rooms.length; j++) {
+    for (var j = 0; j < roomsArray.length; j++) {
       if (roomsArray[j].floor === floorsArray[i]) {
         floorBody.appendChild(renderRoom(roomsArray[j]));
       };
@@ -399,7 +380,7 @@ var roomOnScroll = function (items) {
       items[i].style.left = window.pageXOffset + 12 + "px";
     };
   } else {
-    for (var j = 0; j < rooms.length; j++) {
+    for (var j = 0; j < db.rooms.length; j++) {
       if (items[j].classList.contains("floor__room-title--tooltip")) {
         items[j].classList.remove("floor__room-title--tooltip");
       };
@@ -407,39 +388,12 @@ var roomOnScroll = function (items) {
   };
 };
 
-loadEvents();
-
 
 //Генерация списка всех пользователей в форме
 
-var loadUsers = function () {
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', "/graphql?query={users{id, login, avatarUrl, homeFloor}}");
-  xhr.send();
-  xhr.onreadystatechange = function() {
-
-    if (xhr.readyState != 4) return;
-
-    if (xhr.status != 200) {
-      console.log(xhr.status + ": " + xhr.statusText);
-      return;
-    } else {
-      try {
-        users = (JSON.parse(xhr.responseText)).data.users;
-      } catch (e) {
-        alert( "Некорректный ответ " + e.message );
-      };
-      createEventCandidatesList ();
-    };
-  };
-};
-
-var users;
-
 var createEventCandidatesList = function () {
 
-  for (var i = 0; i < users.length; i++) {
+  for (var i = 0; i < db.users.length; i++) {
 
     var candidate = templateEventCandidate.content.cloneNode(true);
     var field = candidate.querySelector(".field__option");
@@ -447,14 +401,14 @@ var createEventCandidatesList = function () {
     var login = candidate.querySelector(".user__login");
     var homeFloor = candidate.querySelector(".user__home-floor");
 
-    field.setAttribute("data-id", users[i].id);
+    field.setAttribute("data-id", db.users[i].id);
     field.setAttribute("data-index", i);
-    avatar.setAttribute("alt", users[i].login);
-    login.innerHTML = users[i].login;
-    homeFloor.innerHTML = users[i].homeFloor + " этаж";
+    avatar.setAttribute("alt", db.users[i].login);
+    login.innerHTML = db.users[i].login;
+    homeFloor.innerHTML = db.users[i].homeFloor + " этаж";
 
-    if (users[i].avatarUrl != null) {
-      avatar.setAttribute("src", users[i].avatarUrl);
+    if (db.users[i].avatarUrl != null) {
+      avatar.setAttribute("src", db.users[i].avatarUrl);
     } else {
       avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
     };
@@ -464,7 +418,7 @@ var createEventCandidatesList = function () {
 
 };
 
-loadUsers ();
+loadData();
 
 
 // Выбор участников встречи
@@ -477,17 +431,17 @@ var selectEventCandidate = function (index) {
   var avatar = member.querySelector(".user__avatar");
   var login = member.querySelector(".user__login");
 
-  user.setAttribute("data-id", users[index].id);
+  user.setAttribute("data-id", db.users[index].id);
   user.setAttribute("data-index", index);
-  input.setAttribute("name", users[index].id);
+  input.setAttribute("name", db.users[index].id);
 
-  if (users[index].avatarUrl != null) {
-    avatar.setAttribute("src", users[index].avatarUrl);
+  if (db.users[index].avatarUrl != null) {
+    avatar.setAttribute("src", db.users[index].avatarUrl);
   } else {
     avatar.setAttribute("src", "https://hochu.ua/i/default-user-avatar.png");
   };
 
-  login.innerHTML = users[index].login;
+  login.innerHTML = db.users[index].login;
   eventUsersList.appendChild(member);
 };
 
@@ -527,6 +481,17 @@ eventUsersList.addEventListener("click", function (evt) {
     target = target.parentNode;
   };
 });
+
+
+// Сброс выбранных участников встречи
+
+var resetSelectEventCandidates = function () {
+  var itemsList = eventCandidatesList.querySelectorAll(".field__option");
+  for (var i = 0; i < itemsList.length; i++) {
+    itemsList[i].removeAttribute("style");
+  };
+  eventUsersList.innerHTML = "";
+};
 
 
 // Открытие и закрытите календаря на главной странице
@@ -569,7 +534,6 @@ headerButton.addEventListener("click", function (evt) {
   inputEventDate.value = "";
   inputEventStart.value = "";
   inputEventEnd.value = "";
-  eventUsersList.innerHTML = "";
   eventRecommendation.innerHTML = "";
   inputEventStart.addEventListener("input", function (evt) {
     if (inputEventStart.value && inputEventEnd.value) {
@@ -607,14 +571,14 @@ var eventOpeninRoom = function (item) {
       inputEventStart.value = eventStart.getHours() + ":" + eventStart.getMinutes();
       inputEventEnd.value = eventEnd.getHours() + ":" + eventEnd.getMinutes();
 
-      for (var i = 0; i < rooms.length; i++) {
-        if (item.getAttribute("data-room") === rooms[i].id) {
+      for (var i = 0; i < db.rooms.length; i++) {
+        if (item.getAttribute("data-room") === db.rooms[i].id) {
           index = i;
         };
       };
 
       eventRecommendation.innerHTML = "";
-      renderRecommenderRoom(rooms[index], parseInt ((evt.target.parentNode.getAttribute("data-start"))), parseInt (evt.target.parentNode.getAttribute("data-end")), true);
+      renderRecommenderRoom(db.rooms[index], parseInt ((evt.target.parentNode.getAttribute("data-start"))), parseInt (evt.target.parentNode.getAttribute("data-end")), true);
       eventOpen ();
     };
   });
@@ -636,22 +600,22 @@ var tooltipOnClick = function (item) {
 
     if (evt.target.classList.contains("tooltip__edit")) {
       var index = evt.target.parentNode.getAttribute("data-index");
-      var eventStart = new Date (Date.parse (events[index].dateStart));
-      var eventEnd = new Date (Date.parse (events[index].dateEnd));
+      var eventStart = new Date (Date.parse (db.events[index].dateStart));
+      var eventEnd = new Date (Date.parse (db.events[index].dateEnd));
 
-      inputEventName.value = events[index].title;
+      inputEventName.value = db.events[index].title;
       inputEventStart.value = eventStart.getHours() + ":" + eventStart.getMinutes();
       inputEventEnd.value = eventEnd.getHours() + ":" + eventEnd.getMinutes();
 
-      for (var i = 0; i < events[index].users.length; i++) {
-        var candidate = eventCandidatesList.querySelector("[data-id=\"" + events[index].users[i].id + "\"]");
+      for (var i = 0; i < db.events[index].users.length; i++) {
+        var candidate = eventCandidatesList.querySelector("[data-id=\"" + db.events[index].users[i].id + "\"]");
         if (candidate) {
           candidate.style.display = "none";
           selectEventCandidate (candidate.getAttribute("data-index"));
         };
       };
 
-      renderRecommenderRoom(events[index].room, Date.parse(events[index].dateStart), Date.parse(events[index].dateEnd), true);
+      renderRecommenderRoom(db.events[index].room, Date.parse(db.events[index].dateStart), Date.parse(db.events[index].dateEnd), true);
 
       eventEdit ();
     };
