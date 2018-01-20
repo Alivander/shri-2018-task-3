@@ -184,12 +184,15 @@ var loadData = function () {
       } catch (e) {
         alert( "Некорректный ответ " + e.message );
       };
+
       sortAnEvents(db.events);
       renderFloors(selectitionFloors(db.rooms), db.rooms);
       window.addEventListener("scroll", function () {
         roomOnScroll(roomTitles);
       });
       createEventCandidatesList ();
+
+      getRecommendation (date, db.users, db);   // для теста
     };
 
   };
@@ -214,6 +217,8 @@ var sortAnEvents = function (eventsArray) {
 };
 
 var renderEvents = function (room, eventRow, eventsArray) {
+
+  room.segments = new Array (64);
 
   var fragmentRoom = document.createDocumentFragment();
   var timePoints = [];
@@ -245,6 +250,8 @@ var renderEvents = function (room, eventRow, eventsArray) {
       var avatar = eventSlot.querySelector(".user__avatar");
       var login = eventSlot.querySelector(".user__login");
       var cauntMembers = eventSlot.querySelector(".tooltip__caunt-users");
+      var segmentsOffTime = Math.floor((Date.parse(eventsArray[i].dateStart) - startOfDay) / 900000);
+      var segmentsEvent = Math.floor((eventEnd - eventStart) / 900000);
 
       eventSlotInner.style.width = (eventEnd - eventStart) / 60000 * 1.1 + "px";
       eventTooltip.setAttribute("data-id", eventsArray[i].id);
@@ -271,6 +278,7 @@ var renderEvents = function (room, eventRow, eventsArray) {
       if (Date.parse(eventsArray[i].dateStart) > timeSwap) {
         var slotOffTime = templateOffTime.content.cloneNode(true);
         var slotOffTimeInner = slotOffTime.querySelector(".floor__off-time");
+
         slotOffTimeInner.setAttribute("data-start", timeSwap);
         slotOffTimeInner.setAttribute("data-room", room.id);
         slotOffTimeInner.setAttribute("data-end", Date.parse(eventsArray[i].dateStart));
@@ -278,11 +286,15 @@ var renderEvents = function (room, eventRow, eventsArray) {
         eventOpeninRoom (slotOffTimeInner);
         fragmentRoom.appendChild(slotOffTime);
         fragmentRoom.appendChild(eventSlot);
-        timeSwap = Date.parse(eventsArray[i].dateEnd);
       } else {
         fragmentRoom.appendChild(eventSlot);
-        timeSwap = Date.parse(eventsArray[i].dateEnd);
       };
+
+      for (var j = segmentsOffTime; j < segmentsOffTime + segmentsEvent; j++) {
+        room.segments[j] = i;
+      };
+
+      timeSwap = Date.parse(eventsArray[i].dateEnd);
     };
 
   };
@@ -299,7 +311,6 @@ var renderEvents = function (room, eventRow, eventsArray) {
   };
 
   eventRow.appendChild(fragmentRoom);
-
 };
 
 
