@@ -545,7 +545,6 @@ headerButton.addEventListener("click", function (evt) {
   inputEventDate.value = "";
   inputEventStart.value = "";
   inputEventEnd.value = "";
-  // eventRecommendation.innerHTML = "";
   inputEventStart.addEventListener("input", function (evt) {
     if (inputEventStart.value && inputEventEnd.value) {
       eventRecommendation.innerHTML = "Подбор переговорок...";
@@ -677,7 +676,7 @@ inputEventName.addEventListener("input", function () {
 });
 
 
-// Отрисовка переговорки
+// Отрисовка рекоммендованной переговорки
 
 var renderRecommenderRoom = function (roomEvent, eventStart, eventEnd, check) {
   var room = templateRecommendedRoom.content.cloneNode(true);
@@ -703,39 +702,43 @@ var renderRecommenderRoom = function (roomEvent, eventStart, eventEnd, check) {
 
 // Выбор переговорки из предложенных
 
-var variantOnClick = function (item) {
-  item.addEventListener("click", function (evt) {
-    evt.preventDefault ();
+eventRecommendation.addEventListener("click", function (evt) {
+  evt.preventDefault ();
+  var eventVariants = eventRecommendation.querySelectorAll(".event__variant");
+  var target = evt.target;
 
-    var input = item.querySelector("input");
+  while (!target.classList.contains("event__recommendation")) {
 
-    if (!input.checked) {
-      eventRecommendation.dataset.heading = "Ваша переговорка";
-      input.checked = true;
-      item.classList.add("event__variant--active");
+    if (target.classList.contains("event__variant")) {
 
-      for (var i = 0; i < eventVariants.length; i++) {
-        if (!eventVariants[i].classList.contains("event__variant--active")) {
-          eventVariants[i].style.display = "none";
+      var input = target.querySelector("input");
+
+      if (!input.checked) {
+        eventRecommendation.dataset.heading = "Ваша переговорка";
+        input.checked = true;
+        target.classList.add("event__variant--active");
+
+        for (var i = 0; i < eventVariants.length; i++) {
+          if (!eventVariants[i].classList.contains("event__variant--active")) {
+            eventVariants[i].style.display = "none";
+          };
+        };
+
+      } else {
+        eventRecommendation.dataset.heading = "Рекомендованные переговорки";
+        input.checked = false;
+
+        for (var i = 0; i < eventVariants.length; i++) {
+          eventVariants[i].removeAttribute('style');
+          eventVariants[i].classList.remove("event__variant--active");
         };
       };
 
-    } else {
-      eventRecommendation.dataset.heading = "Рекомендованные переговорки";
-      input.checked = false;
-
-      for (var i = 0; i < eventVariants.length; i++) {
-        eventVariants[i].removeAttribute('style');
-        eventVariants[i].classList.remove("event__variant--active");
-      };
-
     };
-  });
-};
 
-for (var i = 0; i < eventVariants.length; i++) {
-  variantOnClick(eventVariants[i]);
-};
+    target = target.parentNode;
+  };
+});
 
 
 // Закрытие страницы встречи без сохранения
