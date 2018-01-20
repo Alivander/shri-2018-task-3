@@ -545,7 +545,7 @@ headerButton.addEventListener("click", function (evt) {
   inputEventDate.value = "";
   inputEventStart.value = "";
   inputEventEnd.value = "";
-  eventRecommendation.innerHTML = "";
+  // eventRecommendation.innerHTML = "";
   inputEventStart.addEventListener("input", function (evt) {
     if (inputEventStart.value && inputEventEnd.value) {
       eventRecommendation.innerHTML = "Подбор переговорок...";
