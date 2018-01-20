@@ -78,10 +78,11 @@ function getRecommendation(date, members, db) {
 
   for (var i = 0; i < db.rooms.length; i++) {
     var freeSlot = 0;
-
-    for (var j = newEventStart; j < newEventEnd; j++) {
-      if (!db.rooms[i].segments[j]) {
-        freeSlot++;
+    if (db.rooms[i].capacity >= members.length) {
+      for (var j = newEventStart; j < newEventEnd; j++) {
+        if (!db.rooms[i].segments[j]) {
+          freeSlot++;
+        };
       };
     };
 
@@ -106,6 +107,10 @@ function getRecommendation(date, members, db) {
   };
 
   for (var i = 0; i < 3; i++) {
-    renderRecommenderRoom (db.rooms[suitable.roomsIndexes[i]], Date.parse (date.start), Date.parse (date.end));
+    if (suitable.roomsIndexes[i]) {
+      renderRecommenderRoom (db.rooms[suitable.roomsIndexes[i]], Date.parse (date.start), Date.parse (date.end));
+    } else {
+      break
+    };
   };
 };
