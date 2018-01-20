@@ -613,7 +613,8 @@ var eventOpeninRoom = function (item) {
         };
       };
 
-      renderRecommenderRoom(events[index].room, parseInt ((evt.target.parentNode.getAttribute("data-start"))), parseInt (evt.target.parentNode.getAttribute("data-end")), true);
+      eventRecommendation.innerHTML = "";
+      renderRecommenderRoom(rooms[index], parseInt ((evt.target.parentNode.getAttribute("data-start"))), parseInt (evt.target.parentNode.getAttribute("data-end")), true);
       eventOpen ();
     };
   });
