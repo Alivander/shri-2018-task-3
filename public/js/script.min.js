@@ -547,12 +547,12 @@ headerButton.addEventListener("click", function (evt) {
   inputEventEnd.value = "";
   inputEventStart.addEventListener("input", function (evt) {
     if (inputEventStart.value && inputEventEnd.value) {
-      eventRecommendation.innerHTML = "Подбор переговорок...";
+      eventRecommendation.innerHTML = "Подбор переговорок..."; // Заглушка для getRecommendation ()
     };
   });
   inputEventEnd.addEventListener("input", function (evt) {
     if (inputEventStart.value && inputEventEnd.value) {
-      eventRecommendation.innerHTML = "Подбор переговорок...";
+      eventRecommendation.innerHTML = "Подбор переговорок..."; // Заглушка для getRecommendation ()
     };
   });
 });
