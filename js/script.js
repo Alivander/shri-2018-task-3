@@ -192,7 +192,7 @@ var loadData = function () {
       });
       createEventCandidatesList ();
 
-      getRecommendation (date, db.users, db);   // для теста
+      getRecommendation (date, db.users.slice(0, 4), db);   // для теста
     };
 
   };
