@@ -71,6 +71,9 @@ function getRecommendation(date, members, db) {
     return sumPassedFloor;
   };
 
+
+  // Сортируем подходящие переговорки по количеству пройденных этажей
+
   var sortingRooms = function (output) {
     for (var i = 0; i < output.roomsIndexes.length - 1; i++) {
       var min = output.passedFloors[i];
@@ -86,6 +89,9 @@ function getRecommendation(date, members, db) {
       };
     };
   };
+
+
+  // Подфункция, находит все свободные переговорки для заданного времени
 
   var searchSuitableRoom = function (start, end, membersArray, ignoreEvent) {
     var startOfDay = Date.parse(start.slice(0, 11) + "03:30:00.000Z");
@@ -141,6 +147,9 @@ function getRecommendation(date, members, db) {
 
   suitable = searchSuitableRoom (date.start, date.end, members);
 
+
+  // Если свободные переговорки не найдены, то ищем свободные переговорки для встреч, с которыми пересекается нужное время
+
   if (suitable.roomsIndexes.length === 0) {
     console.log("Для всречи с 17:15 до 19:15 свободных переговорок нет, нужен перенос встреч:");
 
@@ -150,6 +159,9 @@ function getRecommendation(date, members, db) {
     for (var i = 0; i < suitable.eventsInSameTime.length; i++) {
       var index = suitable.eventsInSameTime[i];
       suitableSwap = searchSuitableRoom (db.events[index].dateStart, db.events[index].dateEnd, db.events[index].users);
+
+
+      // Если есть возможность перенести всречи, то проверяем подходит ли нам переговорка, из которой будет перенесена всреча
 
       if (suitableSwap.roomsIndexes.length != 0) {
         suitableVariant = searchSuitableRoom (date.start, date.end, members, index);
@@ -161,6 +173,9 @@ function getRecommendation(date, members, db) {
             eventName: db.events[index].title, // для просмотра теста в консоли
             roomName: db.rooms[suitableSwap.roomsIndexes[0]].title // для просмотра теста в консоли
           };
+
+          // Если переговорка подходит, добавляем ее к рекомендованным и сохраняем информацию о переносе всречи
+
           swaps.push(swapVariant);
           suitable.roomsIndexes = suitable.roomsIndexes.concat(suitableVariant.roomsIndexes);
           suitable.passedFloors = suitable.passedFloors.concat(suitableVariant.passedFloors);
@@ -173,7 +188,12 @@ function getRecommendation(date, members, db) {
     };
   };
 
+  //Сорируем новые результаты по количеству пройденных этажей
+
   sortingRooms(suitable);
+
+
+  // Отрисовываем рекомендованные переговорки
 
   for (var i = 0; i < suitable.roomsIndexes.length; i++) {
 

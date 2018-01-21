@@ -373,8 +373,10 @@ var renderFloors = function (floorsArray, roomsArray) {
         floorBody.appendChild(renderRoom(roomsArray[j]));
       };
     };
+
     diagram.appendChild(floor);
   };
+  
   roomTitles = mainPage.querySelectorAll(".floor__room-title");
 };
 
